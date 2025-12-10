@@ -1,13 +1,16 @@
-import './App.css'
-import AddTask from './components/addTask'
+import './App.css';
+import AddTask from './components/addTask';
 
-import { useState, useEffect} from 'react'
-import { getAllTaskList } from './http'
-import List from './components/List'
+import { useState, useEffect, use, useDebugValue } from 'react';
+import { getTaskList } from './http';
+import List from './components/List';
+import Menu from './components/Menu';
 
 function App() {
   const [list, setList] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
+  const [selectedTasks, setSelectedTasks] = useState('all');
+  const [listInfo, setListInfo] = useState({});
   const [error, setError] = useState();
 
   useEffect(() => {
@@ -15,27 +18,77 @@ function App() {
       setIsFetching(true);
       setError();
       try {
-        const list = await getAllTaskList();
-        setList(list);
+        const list = await getTaskList(selectedTasks);
+        setList(list.data);
+        setListInfo(list.info);
         setIsFetching(false);
       } catch (error) {
-        setError({ message: error.message || 'Failed to fetch list' })
+        setError({ message: error.message || 'Failed to fetch list' });
       }
     }
     fetchAllList();
-  }, [])
-
-  function handleAddNewTask(task){
+  }, [selectedTasks]);
+  function handleAddNewTask(task) {
     setList([...list, task]);
+    setListInfo((prev) => {
+      return {
+        ...prev,
+        all: prev.all + 1,
+        inWork: prev.inWork + 1,
+      };
+    });
   }
 
+  function handleAddEditTask(task) {
+    const editList = list.map((item) => {
+      if (task.id === item.id) {
+        return task;
+      }
+      return item;
+    });
+    setList(editList);
+  }
+
+  function handleDeleteTask(id, isDone) {
+    const editList = list.filter((item) => item.id != id);
+    setList(editList);
+    setListInfo((prev) => {
+      return {
+        all: prev.all - 1,
+        completed: prev.completed - (isDone ? 1 : 0),
+        inWork: prev.inWork - (isDone ? 0 : 1),
+      };
+    });
+  }
+
+  function handleClickSelectTasks(selectedButton) {
+    setSelectedTasks(selectedButton);
+  }
+
+  function handleChangeIsDone(isDone) {
+    const i = isDone ? 1 : -1;
+    setListInfo((prev) => {
+      return {
+        ...prev,
+        completed: prev.completed + i,
+        inWork: prev.inWork - i,
+      };
+    });
+  }
+
+  const functions = {
+    edit: handleAddEditTask,
+    delete: handleDeleteTask,
+    chahgeIsDone: handleChangeIsDone,
+  };
   return (
     <>
-      <AddTask handleAddNewTask={handleAddNewTask}/>
+      <AddTask handleAddNewTask={handleAddNewTask} />
+      <Menu listInfo={listInfo} handleClick={handleClickSelectTasks} />
       {error && <p>{error.message}</p>}
-      {!error && isFetching ? <p>Loading...</p> : <List list={list} />}
+      {!error && isFetching ? <p>Loading...</p> : <List functions={functions} list={list} />}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
