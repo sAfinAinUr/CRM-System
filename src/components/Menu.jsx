@@ -6,16 +6,25 @@ function TabButton({ children, isSelected, quantity, ...props }) {
   );
 }
 
-export default function Menu({ listInfo, handleClick }) {
+export default function Menu({ listInfo, handleClick, isSelected }) {
   return (
-    <section>
-      <TabButton quantity={listInfo.all} onClick={() => handleClick('all')}>
+    <section className="menu">
+      <TabButton
+        isSelected={isSelected === 'all'}
+        quantity={listInfo.all}
+        onClick={() => handleClick('all')}>
         Все
       </TabButton>
-      <TabButton quantity={listInfo.inWork} onClick={() => handleClick('inWork')}>
+      <TabButton
+        isSelected={isSelected === 'inWork'}
+        quantity={listInfo.inWork}
+        onClick={() => handleClick('inWork')}>
         В работе
       </TabButton>
-      <TabButton quantity={listInfo.completed} onClick={() => handleClick('completed')}>
+      <TabButton
+        isSelected={isSelected === 'completed'}
+        quantity={listInfo.completed}
+        onClick={() => handleClick('completed')}>
         Выполнено
       </TabButton>
     </section>

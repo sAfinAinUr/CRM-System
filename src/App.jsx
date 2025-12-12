@@ -1,7 +1,7 @@
 import './App.css';
 import AddTask from './components/addTask';
 
-import { useState, useEffect, use, useDebugValue } from 'react';
+import { useState, useEffect } from 'react';
 import { getTaskList } from './http';
 import List from './components/List';
 import Menu from './components/Menu';
@@ -65,7 +65,7 @@ function App() {
     setSelectedTasks(selectedButton);
   }
 
-  function handleChangeIsDone(isDone) {
+  function handleChangeIsDone(isDone, id) {
     const i = isDone ? 1 : -1;
     setListInfo((prev) => {
       return {
@@ -74,6 +74,8 @@ function App() {
         inWork: prev.inWork - i,
       };
     });
+    const editList = list.filter((item) => item.id != id);
+    setList(editList);
   }
 
   const functions = {
@@ -84,9 +86,11 @@ function App() {
   return (
     <>
       <AddTask handleAddNewTask={handleAddNewTask} />
-      <Menu listInfo={listInfo} handleClick={handleClickSelectTasks} />
-      {error && <p>{error.message}</p>}
-      {!error && isFetching ? <p>Loading...</p> : <List functions={functions} list={list} />}
+      <section className="content">
+        <Menu listInfo={listInfo} handleClick={handleClickSelectTasks} isSelected={selectedTasks} />
+        {error && <p>{error.message}</p>}
+        {!error && isFetching ? <p>Loading...</p> : <List functions={functions} list={list} />}
+      </section>
     </>
   );
 }

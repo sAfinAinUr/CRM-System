@@ -33,6 +33,7 @@ export default function Task({ title, isDone, id, functions }) {
 
   function handleClickClose() {
     setIsEditing(false);
+    setError();
   }
 
   function handleClickDeleteTask() {
@@ -50,7 +51,7 @@ export default function Task({ title, isDone, id, functions }) {
     try {
       const editedTask = await editTask(id, taskName, !taskIsDone);
       functions.edit(editedTask);
-      functions.chahgeIsDone(!taskIsDone);
+      functions.chahgeIsDone(!taskIsDone, id);
       setError();
     } catch (error) {
       setError({ message: error.message || 'error with edit task' });
@@ -59,18 +60,24 @@ export default function Task({ title, isDone, id, functions }) {
 
   return (
     <li>
-      <input type="checkbox" checked={taskIsDone} onChange={handleChangeIsDone}></input>
-      {isEditing ? (
-        <input type="text" defaultValue={taskName} onChange={handleChange} required />
-      ) : (
-        <span>{title}</span>
-      )}
-      <button onClick={!isEditing ? handleClickStartEdit : handleClickEditTask}>
-        {isEditing ? <>✔️</> : <>📝</>}
-      </button>
-      <button onClick={isEditing ? handleClickClose : handleClickDeleteTask}>
-        {isEditing ? <>❌</> : <>🗑️</>}
-      </button>
+      <div className="checkText">
+        {!isEditing && (
+          <input type="checkbox" checked={taskIsDone} onChange={handleChangeIsDone}></input>
+        )}
+        {isEditing ? (
+          <input type="text" defaultValue={taskName} onChange={handleChange} required />
+        ) : (
+          <span className={taskIsDone ? 'isDone' : undefined}>{title}</span>
+        )}
+      </div>
+      <div className="funButtons">
+        <button id="edit" onClick={!isEditing ? handleClickStartEdit : handleClickEditTask}>
+          {isEditing ? <>✔️</> : <>📝</>}
+        </button>
+        <button id="closeDelete" onClick={isEditing ? handleClickClose : handleClickDeleteTask}>
+          {isEditing ? <>❌</> : <>🗑️</>}
+        </button>
+      </div>
       {error && <p>{error.message}</p>}
     </li>
   );
