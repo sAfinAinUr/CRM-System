@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { deleteTask, editTask } from '../http';
-import { verifyText } from './addTask';
+import { verifyText } from './AddTask';
 
 export default function Task({ title, isDone, id, functions }) {
   const [taskName, setTaskName] = useState(title);

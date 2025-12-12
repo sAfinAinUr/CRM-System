@@ -1,5 +1,5 @@
 import './App.css';
-import AddTask from './components/addTask';
+import AddTask from './components/AddTask';
 
 import { useState, useEffect } from 'react';
 import { getTaskList } from './http';
