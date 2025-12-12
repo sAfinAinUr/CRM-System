@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 * {
   box-sizing: border-box;
-  font-family: 'Roboto Slab', sans-serif;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
   margin: 0;
   padding: 0;
   --color-button-editAdd: rgb(138, 176, 245);
@@ -25,11 +27,13 @@ body {
   border-radius: 0.5rem;
 }
 
-.addTaskButton {
+.addTask {
   display: flex;
+  width: 100%;
+  justify-content: center;
 }
 
-.addTaskButton button {
+.addTask button {
   width: 5rem;
   background-color: var(--color-button-editAdd);
   color: white;
@@ -37,17 +41,20 @@ body {
   cursor: pointer;
 }
 
-.addTaskButton input {
+.addTask input {
   border: none;
   outline: none;
   background-color: #f0f0f0;
   padding: 8px;
   border-bottom: solid 2px var(--color-background);
   margin-right: 0.5rem;
+  width: 30rem;
+  font-size: 1.2rem;
 }
 
 .content {
-  width: 50%;
+  margin-top: 2rem;
+  width: 30%;
 }
 
 .menu {
@@ -60,7 +67,8 @@ body {
 }
 
 .menu button {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
   text-decoration: none;
   background-color: transparent;
   color: #b4a5c4;
@@ -70,8 +78,19 @@ body {
 }
 
 .menu .active {
+  position: relative;
   color: rgb(57, 57, 136);
-  text-decoration: underline;
+}
+
+.active::before {
+  position: absolute;
+  width: 100%;
+  content: '';
+  height: 1.6px;
+  bottom: -1px;
+  background-color: currentColor;
+  left: 0;
+  right: 0;
 }
 
 .list {

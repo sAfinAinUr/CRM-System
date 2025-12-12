@@ -74,8 +74,10 @@ function App() {
         inWork: prev.inWork - i,
       };
     });
-    const editList = list.filter((item) => item.id != id);
-    setList(editList);
+    if (selectedTasks != 'all') {
+      const editList = list.filter((item) => item.id != id);
+      setList(editList);
+    }
   }
 
   const functions = {

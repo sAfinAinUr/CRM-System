@@ -30,7 +30,7 @@ export default function AddTask({ handleAddNewTask }) {
   }
 
   return (
-    <form className="addTaskButton" onSubmit={handleAddTask}>
+    <form className="addTask" onSubmit={handleAddTask}>
       {error && <label htmlFor="inputAddText">{error.message}</label>}
       <input
         id="inputAddText"
