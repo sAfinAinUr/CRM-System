@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { deleteTask, editTask } from '../api/http';
-import { verifyText } from './AddTask';
+import { verifyText } from '../helpers/verify';
 
 export default function Task({ title, isDone, id, functions }) {
   const [taskName, setTaskName] = useState(title);
@@ -17,8 +17,9 @@ export default function Task({ title, isDone, id, functions }) {
   }
 
   async function handleClickEditTask() {
-    if (verifyText(taskName)) {
-      setError({ message: 'invalid format' });
+    const verify = verifyText(taskName);
+    if (verify.mean) {
+      setError({ message: verify.message });
       return;
     }
     try {
@@ -34,6 +35,7 @@ export default function Task({ title, isDone, id, functions }) {
   function handleClickClose() {
     setIsEditing(false);
     setError();
+    setTaskName(title);
   }
 
   function handleClickDeleteTask() {
@@ -65,7 +67,7 @@ export default function Task({ title, isDone, id, functions }) {
           <input type="checkbox" checked={taskIsDone} onChange={handleChangeIsDone}></input>
         )}
         {isEditing ? (
-          <input type="text" defaultValue={taskName} onChange={handleChange} required />
+          <input type="text" value={taskName} onChange={handleChange} required />
         ) : (
           <span className={taskIsDone ? 'isDone' : undefined}>{title}</span>
         )}

@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import { addNewTask } from '../api/http';
-
-export function verifyText(text) {
-  return text.length < 2 || text.length > 65;
-}
+import { verifyText } from '../helpers/verify';
 
 export default function AddTask({ handleAddNewTask }) {
   const [taskText, setTaskText] = useState('');
@@ -24,9 +21,11 @@ export default function AddTask({ handleAddNewTask }) {
   }
 
   function handleChange(event) {
-    setIsDisabled(verifyText(event.target.value));
-    setError();
+    const verify = verifyText(event.target.value);
+    setIsDisabled(verify.mean);
+    setError({ message: verify.message });
     setTaskText(event.target.value);
+    setTimeout(() => setError(), 9000);
   }
 
   return (
