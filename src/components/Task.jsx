@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { deleteTask, editTask } from '../http';
+import { deleteTask, editTask } from '../api/http';
 import { verifyText } from './AddTask';
 
 export default function Task({ title, isDone, id, functions }) {

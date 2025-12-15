@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { addNewTask } from '../http';
+import { addNewTask } from '../api/http';
 
 export function verifyText(text) {
   return text.length < 2 || text.length > 65;
