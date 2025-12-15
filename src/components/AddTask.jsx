@@ -25,7 +25,7 @@ export default function AddTask({ handleAddNewTask }) {
     setIsDisabled(verify.mean);
     setError({ message: verify.message });
     setTaskText(event.target.value);
-    setTimeout(() => setError(), 9000);
+    if (event.target.value === '') setTimeout(() => setError(), 9000);
   }
 
   return (
