@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { addNewTask } from '../api/http';
 import { verifyText } from '../helpers/verify';
 
-export default function AddTask({ handleAddNewTask }) {
+export default function AddTask({ updateList }) {
   const [taskText, setTaskText] = useState('');
   const [isDisabled, setIsDisabled] = useState(true);
   const [error, setError] = useState();
@@ -11,8 +11,10 @@ export default function AddTask({ handleAddNewTask }) {
     event.preventDefault();
     setIsDisabled(true);
     try {
-      const task = await addNewTask(taskText);
-      handleAddNewTask(task);
+      // const task = await addNewTask(taskText);
+      // handleAddNewTask(task);
+      await addNewTask(taskText);
+      updateList();
     } catch (error) {
       setError({ message: error.message || 'error with add new task' });
     }

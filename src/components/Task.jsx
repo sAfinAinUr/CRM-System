@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { deleteTask, editTask } from '../api/http';
 import { verifyText } from '../helpers/verify';
 
-export default function Task({ title, isDone, id, functions }) {
+export default function Task({ title, isDone, id, updateList }) {
   const [taskName, setTaskName] = useState(title);
   const [taskIsDone, setTaskIsDone] = useState(isDone);
   const [isEditing, setIsEditing] = useState(false);
@@ -23,8 +23,10 @@ export default function Task({ title, isDone, id, functions }) {
       return;
     }
     try {
-      const editedTask = await editTask(id, taskName);
-      functions.edit(editedTask);
+      // const editedTask = await editTask(id, taskName);
+      // functions.edit(editedTask);
+      await editTask(id, taskName);
+      updateList();
       setError();
     } catch (error) {
       setError({ message: error.message || 'error with edit task' });
@@ -38,10 +40,11 @@ export default function Task({ title, isDone, id, functions }) {
     setTaskName(title);
   }
 
-  function handleClickDeleteTask() {
+  async function handleClickDeleteTask() {
     try {
-      deleteTask(id);
-      functions.delete(id, taskIsDone);
+      await deleteTask(id);
+      // functions.delete(id, taskIsDone);
+      updateList();
       setError();
     } catch (error) {
       setError({ message: error.message || 'error with delete task' });
@@ -51,9 +54,11 @@ export default function Task({ title, isDone, id, functions }) {
   async function handleChangeIsDone() {
     setTaskIsDone((taskIsDone) => !taskIsDone);
     try {
-      const editedTask = await editTask(id, taskName, !taskIsDone);
-      functions.edit(editedTask);
-      functions.chahgeIsDone(!taskIsDone, id);
+      // const editedTask = await editTask(id, taskName, !taskIsDone);
+      // functions.edit(editedTask);
+      // functions.chahgeIsDone(!taskIsDone, id);
+      await editTask(id, taskName, !taskIsDone);
+      updateList();
       setError();
     } catch (error) {
       setError({ message: error.message || 'error with edit task' });
