@@ -17,6 +17,10 @@ export default function Task({ title, isDone, id, updateList }) {
   }
 
   async function handleClickEditTask() {
+    if (title === taskName) {
+      setIsEditing(false);
+      return;
+    }
     const verify = verifyText(taskName);
     if (verify.mean) {
       setError({ message: verify.message });
