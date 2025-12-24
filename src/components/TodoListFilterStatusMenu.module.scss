@@ -1,0 +1,35 @@
+.filterMenu {
+  width: 100%;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0.5rem 0 0.5rem 0;
+}
+
+.filterMenu button {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+  background-color: transparent;
+  color: #b4a5c4;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.filterMenu .active {
+  position: relative;
+  color: rgb(57, 57, 136);
+}
+
+.active::before {
+  position: absolute;
+  width: 100%;
+  content: '';
+  height: 1.6px;
+  bottom: -1px;
+  background-color: currentColor;
+  left: 0;
+  right: 0;
+}

@@ -1,5 +1,5 @@
-export async function addNewTask(title) {
-  const response = await fetch('https://easydev.club/api/v1/todos', {
+export async function addNewTodo(title) {
+  const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/todos`, {
     method: 'POST',
     body: JSON.stringify({ title }),
     headers: {
@@ -14,8 +14,8 @@ export async function addNewTask(title) {
   return await response.json();
 }
 
-export async function getTaskList(param) {
-  const response = await fetch(`https://easydev.club/api/v1/todos?filter=${param}`, {
+export async function getTodoList(filter) {
+  const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/todos?filter=${filter}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -25,9 +25,9 @@ export async function getTaskList(param) {
   return await response.json();
 }
 
-export async function editTask(id, title, isDone) {
-  const response = await fetch(`https://easydev.club/api/v1/todos/${id}`, {
-    body: JSON.stringify({ title, isDone }),
+export async function editTodo(id, todoRequest) {
+  const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/todos/${id}`, {
+    body: JSON.stringify(todoRequest),
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ export async function editTask(id, title, isDone) {
 }
 
 export async function deleteTask(id) {
-  const response = await fetch(`https://easydev.club/api/v1/todos/${id}`, {
+  const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/todos/${id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
