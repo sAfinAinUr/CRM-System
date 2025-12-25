@@ -94,7 +94,7 @@ export default function Todo({ todo, updateList }) {
         <>
           <div className={styles.groupCheckBoxAndTodoTitle}>
             <input type="checkbox" checked={todoIsDone} onChange={handleChangeIsDone}></input>
-            <span className={todoIsDone ? 'isDone' : undefined}>{todo.title}</span>
+            <span className={todoIsDone ? styles.isDone : undefined}>{todo.title}</span>
           </div>
           <div className={styles.groupIconButtons}>
             <IconButton onClick={handleClickStartEdit}>

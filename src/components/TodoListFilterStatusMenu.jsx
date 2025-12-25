@@ -4,18 +4,18 @@ export default function TodoListFilterStatusMenu({ listInfo, handleClick, filter
   return (
     <nav className={styles.filterMenu}>
       <button
-        className={filterStatus === 'all' ? 'active' : undefined}
+        className={filterStatus === 'all' ? styles.active : undefined}
         onClick={() => handleClick('all')}>
         Все({listInfo.all})
       </button>
       <button
-        className={filterStatus === 'inWork' ? 'active' : undefined}
+        className={filterStatus === 'inWork' ? styles.active : undefined}
         onClick={() => handleClick('inWork')}>
         В работе({listInfo.inWork})
       </button>
       <button
-        className={filterStatus === 'complited' ? 'active' : undefined}
-        onClick={() => handleClick('complited')}>
+        className={filterStatus === 'complited' ? styles.active : undefined}
+        onClick={() => handleClick('completed')}>
         Выполнено({listInfo.completed})
       </button>
     </nav>
