@@ -14,7 +14,7 @@ export default function TodoListFilterStatusMenu({ listInfo, handleClick, filter
         В работе({listInfo.inWork})
       </button>
       <button
-        className={filterStatus === 'complited' ? styles.active : undefined}
+        className={filterStatus === 'completed' ? styles.active : undefined}
         onClick={() => handleClick('completed')}>
         Выполнено({listInfo.completed})
       </button>
