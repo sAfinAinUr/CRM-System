@@ -2,18 +2,12 @@ import { useState } from 'react';
 import { deleteTask, editTodo } from '../api/http';
 import { verifyTodoText } from '../helpers/verify';
 
-import okLogo from '../assets/ok.svg';
-import closeLogo from '../assets/close.svg';
-import editLogo from '../assets/edit.svg';
-import deleteLogo from '../assets/delete.svg';
-
-import IconButton from '../ui/IconButton/IconButton';
+import IconButton, { variantIcons } from '../ui/IconButton/IconButton';
 
 import styles from './Todo.module.scss';
 
 export default function Todo({ todo, updateList }) {
   const [todoTitle, setTodoTitle] = useState(todo.title);
-  const [todoIsDone, setTodoIsDone] = useState(todo.isDone);
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState();
 
@@ -63,9 +57,8 @@ export default function Todo({ todo, updateList }) {
   }
 
   async function handleChangeIsDone() {
-    setTodoIsDone((taskIsDone) => !taskIsDone);
     try {
-      await editTodo(todo.id, { isDone: !todoIsDone });
+      await editTodo(todo.id, { isDone: !todo.isDone });
       updateList();
       setError();
     } catch (error) {
@@ -82,27 +75,24 @@ export default function Todo({ todo, updateList }) {
             <input type="text" value={todoTitle} onChange={handleChange} required />
           </div>
           <div className={styles.groupIconButtons}>
-            <IconButton className="ok" type="submit">
-              <img src={okLogo} alt="ok" />
-            </IconButton>
-            <IconButton className="close" onClick={handleClickCloseEditing}>
-              <img src={closeLogo} alt="close" />
-            </IconButton>
+            <IconButton variant="primary" icon="ok" type="submit" />
+            <IconButton
+              variant="secondary"
+              icon="close"
+              onClick={handleClickCloseEditing}
+              type="button"
+            />
           </div>
         </form>
       ) : (
         <>
           <div className={styles.groupCheckBoxAndTodoTitle}>
-            <input type="checkbox" checked={todoIsDone} onChange={handleChangeIsDone}></input>
-            <span className={todoIsDone ? styles.isDone : undefined}>{todo.title}</span>
+            <input type="checkbox" checked={todo.isDone} onChange={handleChangeIsDone}></input>
+            <span className={todo.isDone ? styles.isDone : undefined}>{todo.title}</span>
           </div>
           <div className={styles.groupIconButtons}>
-            <IconButton onClick={handleClickStartEdit}>
-              <img src={editLogo} alt="edit" />
-            </IconButton>
-            <IconButton className="delete" onClick={handleClickDeleteTask}>
-              <img src={deleteLogo} alt="delete" />
-            </IconButton>
+            <IconButton icon="edit" onClick={handleClickStartEdit} />
+            <IconButton variant="danger" icon="delete" onClick={handleClickDeleteTask} />
           </div>
         </>
       )}
