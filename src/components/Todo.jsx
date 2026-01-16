@@ -1,0 +1,101 @@
+import { useState } from 'react';
+import { deleteTask, editTodo } from '../api/http';
+import { verifyTodoText } from '../helpers/verify';
+
+import IconButton, { variantIcons } from '../ui/IconButton/IconButton';
+
+import styles from './Todo.module.scss';
+
+export default function Todo({ todo, updateList }) {
+  const [todoTitle, setTodoTitle] = useState(todo.title);
+  const [isEditing, setIsEditing] = useState(false);
+  const [error, setError] = useState();
+
+  function handleChange(event) {
+    setTodoTitle(event.target.value);
+  }
+
+  function handleClickStartEdit() {
+    setIsEditing((editing) => !editing);
+  }
+
+  async function handleClickEditTodo(event) {
+    event.preventDefault();
+    if (todo.title === todoTitle) {
+      setIsEditing(false);
+      return;
+    }
+    const verify = verifyTodoText(todoTitle);
+    if (verify.isNotValid) {
+      setError({ message: verify.message });
+      return;
+    }
+    try {
+      await editTodo(todo.id, { title: todoTitle });
+      updateList();
+      setError();
+    } catch (error) {
+      setError({ message: error.message || 'error with edit task' });
+    }
+    setIsEditing(false);
+  }
+
+  function handleClickCloseEditing() {
+    setIsEditing(false);
+    setError();
+    setTodoTitle(todo.title);
+  }
+
+  async function handleClickDeleteTask() {
+    try {
+      await deleteTask(todo.id);
+      updateList();
+      setError();
+    } catch (error) {
+      setError({ message: error.message || 'error with delete task' });
+    }
+  }
+
+  async function handleChangeIsDone() {
+    try {
+      await editTodo(todo.id, { isDone: !todo.isDone });
+      updateList();
+      setError();
+    } catch (error) {
+      setError({ message: error.message || 'error with edit task' });
+    }
+  }
+
+  return (
+    <li>
+      {isEditing ? (
+        <form onSubmit={handleClickEditTodo} className={styles.formEdit}>
+          <p>{error && error.message}</p>
+          <div className={styles.groupCheckBoxAndTodoTitle}>
+            <input type="text" value={todoTitle} onChange={handleChange} required />
+          </div>
+          <div className={styles.groupIconButtons}>
+            <IconButton variant="primary" icon="ok" type="submit" />
+            <IconButton
+              variant="secondary"
+              icon="close"
+              onClick={handleClickCloseEditing}
+              type="button"
+            />
+          </div>
+        </form>
+      ) : (
+        <>
+          <div className={styles.groupCheckBoxAndTodoTitle}>
+            <input type="checkbox" checked={todo.isDone} onChange={handleChangeIsDone}></input>
+            <span className={todo.isDone ? styles.isDone : undefined}>{todo.title}</span>
+          </div>
+          <div className={styles.groupIconButtons}>
+            <IconButton icon="edit" onClick={handleClickStartEdit} />
+            <IconButton variant="danger" icon="delete" onClick={handleClickDeleteTask} />
+          </div>
+        </>
+      )}
+    </li>
+  );
+}

@@ -1,0 +1,62 @@
+.formEdit {
+  display: flex;
+  margin: 0;
+}
+
+.groupCheckBoxAndTodoTitle {
+  display: flex;
+}
+
+.groupCheckBoxAndTodoTitle input {
+  margin: 0 0.5rem 0 0.5rem;
+}
+
+.groupIconButtons {
+  display: flex;
+}
+
+.groupCheckBoxAndTodoTitle input[type='text'] {
+  border: none;
+  outline: none;
+  background-color: #f0f0f0;
+  padding: 8px;
+  margin-right: 0.5rem;
+  width: 17rem;
+}
+
+.groupCheckBoxAndTodoTitle span {
+  display: inline;
+  word-break: break-all;
+  font-size: 1rem;
+  line-height: 1.125rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.isDone {
+  text-decoration: line-through;
+  color: #9194b6;
+}
+
+.groupCheckBoxAndTodoTitle input[type='checkbox'] {
+  position: relative;
+  padding: 8px;
+  appearance: none;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  justify-self: center;
+  align-self: center;
+}
+.groupCheckBoxAndTodoTitle input[type='checkbox']:checked {
+  background: #8ab0f5;
+}
+input[type='checkbox']:checked::before {
+  position: absolute;
+  content: '\2713';
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ddd;
+}
