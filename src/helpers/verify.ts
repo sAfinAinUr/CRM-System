@@ -1,4 +1,4 @@
-export function verifyTodoText(text) {
+export function verifyTodoText(text: string): { isNotValid: boolean; message?: string } {
   if (text.length < 2) {
     return {
       isNotValid: true,

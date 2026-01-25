@@ -1,6 +1,17 @@
 import styles from './TodoListFilterStatusMenu.module.scss';
+import { TodoInfo, FilterStatus } from '../types/types.ts';
 
-export default function TodoListFilterStatusMenu({ listInfo, handleClick, filterStatus }) {
+type TodoListFilterStatusMenuProps = {
+  listInfo: TodoInfo;
+  handleClick: (selectedButton: FilterStatus) => void;
+  filterStatus: FilterStatus;
+};
+
+export default function TodoListFilterStatusMenu({
+  listInfo,
+  handleClick,
+  filterStatus,
+}: TodoListFilterStatusMenuProps) {
   return (
     <nav className={styles.filterMenu}>
       <button
