@@ -2,7 +2,7 @@ import { ChangeEvent, FormEvent, useState } from 'react';
 import { deleteTask, editTodo } from '../api/http';
 import { verifyTodoText } from '../helpers/verify';
 import { Todo } from '../types/types.ts';
-import IconButton, { variantIcons } from '../ui/IconButton/IconButton';
+import IconButton from '../ui/IconButton/IconButton';
 
 import styles from './Todo.module.scss';
 
@@ -12,7 +12,7 @@ type TodoItemProps = {
 };
 
 export default function TodoItem({ todo, updateList }: TodoItemProps) {
-  const [todoTitle, setTodoTitle] = useState(todo.title);
+  const [todoTitle, setTodoTitle] = useState<string>(todo.title);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [error, setError] = useState<{ message?: string }>();
 
@@ -39,8 +39,12 @@ export default function TodoItem({ todo, updateList }: TodoItemProps) {
       await editTodo(todo.id, { title: todoTitle });
       updateList();
       setError({});
-    } catch (error: any) {
-      setError({ message: error.message || 'error with edit task' });
+    } catch (error: unknown) {
+      if (typeof error === 'string') {
+        setError({ message: error });
+      } else if (error instanceof Error) {
+        setError({ message: error.message });
+      } else setError({ message: 'error with add new task' });
     }
     setIsEditing(false);
   }
@@ -56,8 +60,12 @@ export default function TodoItem({ todo, updateList }: TodoItemProps) {
       await deleteTask(todo.id);
       updateList();
       setError({});
-    } catch (error: any) {
-      setError({ message: error.message || 'error with delete task' });
+    } catch (error: unknown) {
+      if (typeof error === 'string') {
+        setError({ message: error });
+      } else if (error instanceof Error) {
+        setError({ message: error.message });
+      } else setError({ message: 'error with add new task' });
     }
   }
 
@@ -66,8 +74,12 @@ export default function TodoItem({ todo, updateList }: TodoItemProps) {
       await editTodo(todo.id, { isDone: !todo.isDone });
       updateList();
       setError({});
-    } catch (error: any) {
-      setError({ message: error.message || 'error with edit task' });
+    } catch (error: unknown) {
+      if (typeof error === 'string') {
+        setError({ message: error });
+      } else if (error instanceof Error) {
+        setError({ message: error.message });
+      } else setError({ message: 'error with add new task' });
     }
   }
 

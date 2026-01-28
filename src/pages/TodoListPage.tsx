@@ -17,19 +17,22 @@ export default function TodoListPage() {
   const [todoList, setTodoList] = useState<Todo[]>([]);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [filterStatusOfTaskList, setFilterStatusOfTaskList] = useState<FilterStatus>('all');
-  const [todoListInfo, setrTodoListInfo] = useState<TodoInfo>(DEFAULT_LIST_INFO);
-  const [error, setError] = useState<{ message: string }>();
+  const [todoListInfo, setTodoListInfo] = useState<TodoInfo>(DEFAULT_LIST_INFO);
+  const [error, setError] = useState<{ message: string } | null>();
 
   async function fetchTodoData(): Promise<void> {
     setIsFetching(true);
-    setError(undefined);
+    setError(null);
     try {
-      const response = await getTodoList(filterStatusOfTaskList);
+      const response: MetaResponse<Todo, TodoInfo> = await getTodoList(filterStatusOfTaskList);
       setTodoList(response.data);
-      console.log(response);
-      setrTodoListInfo(response.info);
-    } catch (error: any) {
-      setError({ message: error.message || 'Failed to fetch list' });
+      setTodoListInfo(response.info || DEFAULT_LIST_INFO);
+    } catch (error: unknown) {
+      if (typeof error === 'string') {
+        setError({ message: error });
+      } else if (error instanceof Error) {
+        setError({ message: error.message });
+      } else setError({ message: 'error with add new task' });
     } finally {
       setIsFetching(false);
     }

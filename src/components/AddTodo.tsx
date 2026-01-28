@@ -1,4 +1,4 @@
-import { ChangeEvent, ClipboardEvent, FormEvent, FormEventHandler, useState } from 'react';
+import { ChangeEvent, ClipboardEvent, FormEvent, memo, useState } from 'react';
 import { addNewTodo } from '../api/http';
 import { verifyTodoText } from '../helpers/verify';
 
@@ -8,7 +8,7 @@ type AddTodoProps = {
   updateList: () => Promise<void>;
 };
 
-export default function AddTodo({ updateList }: AddTodoProps) {
+export default memo(function AddTodo({ updateList }: AddTodoProps) {
   const [todoText, setTodoText] = useState<string>('');
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [error, setError] = useState<{ message?: string }>();
@@ -25,8 +25,12 @@ export default function AddTodo({ updateList }: AddTodoProps) {
       await addNewTodo(todoText);
       updateList();
       setTodoText('');
-    } catch (error: any) {
-      setError({ message: error.message || 'error with add new task' });
+    } catch (error: unknown) {
+      if (typeof error === 'string') {
+        setError({ message: error });
+      } else if (error instanceof Error) {
+        setError({ message: error.message });
+      } else setError({ message: 'error with add new task' });
     } finally {
       setIsDisabled(false);
     }
@@ -60,4 +64,4 @@ export default function AddTodo({ updateList }: AddTodoProps) {
       </form>
     </>
   );
-}
+});

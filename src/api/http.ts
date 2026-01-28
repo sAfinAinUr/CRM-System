@@ -1,7 +1,9 @@
-import { TodoRequest } from '../types/types.ts';
+import { TodoRequest, Todo, TodoInfo, MetaResponse } from '../types/types.ts';
 
-export async function addNewTodo(title: string) {
-  const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/todos`, {
+const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
+
+export async function addNewTodo(title: string): Promise<Todo> {
+  const response = await fetch(`${BASE_URL}/todos`, {
     method: 'POST',
     body: JSON.stringify({ title }),
     headers: {
@@ -16,8 +18,8 @@ export async function addNewTodo(title: string) {
   return await response.json();
 }
 
-export async function getTodoList(filter: string) {
-  const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/todos?filter=${filter}`, {
+export async function getTodoList(filter: string): Promise<MetaResponse<Todo, TodoInfo>> {
+  const response = await fetch(`${BASE_URL}/todos?filter=${filter}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -27,8 +29,8 @@ export async function getTodoList(filter: string) {
   return await response.json();
 }
 
-export async function editTodo(id: number, todoRequest: TodoRequest) {
-  const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/todos/${id}`, {
+export async function editTodo(id: number, todoRequest: TodoRequest): Promise<Todo> {
+  const response = await fetch(`${BASE_URL}/todos/${id}`, {
     body: JSON.stringify(todoRequest),
     method: 'PUT',
     headers: {
@@ -40,7 +42,7 @@ export async function editTodo(id: number, todoRequest: TodoRequest) {
 }
 
 export async function deleteTask(id: number) {
-  const response = await fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/todos/${id}`, {
+  const response = await fetch(`${BASE_URL}/todos/${id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
