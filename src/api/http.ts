@@ -1,4 +1,4 @@
-import { TodoRequest, Todo, TodoInfo, MetaResponse } from '../types/types.ts';
+import { TodoRequest, Todo, TodoInfo, MetaResponse, FilterStatus } from '../types/types.ts';
 
 const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 
@@ -18,7 +18,7 @@ export async function addNewTodo(title: string): Promise<Todo> {
   return await response.json();
 }
 
-export async function getTodoList(filter: string): Promise<MetaResponse<Todo, TodoInfo>> {
+export async function getTodoList(filter: FilterStatus): Promise<MetaResponse<Todo, TodoInfo>> {
   const response = await fetch(`${BASE_URL}/todos?filter=${filter}`, {
     method: 'GET',
     headers: {
