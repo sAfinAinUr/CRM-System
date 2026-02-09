@@ -1,17 +1,22 @@
-import { useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { deleteTask, editTodo } from '../api/http';
 import { verifyTodoText } from '../helpers/verify';
-
-import IconButton, { variantIcons } from '../ui/IconButton/IconButton';
+import { Todo } from '../types/types.ts';
+import IconButton from '../ui/IconButton/IconButton';
 
 import styles from './Todo.module.scss';
 
-export default function Todo({ todo, updateList }) {
-  const [todoTitle, setTodoTitle] = useState(todo.title);
-  const [isEditing, setIsEditing] = useState(false);
-  const [error, setError] = useState();
+type TodoItemProps = {
+  todo: Todo;
+  updateList: () => Promise<void>;
+};
 
-  function handleChange(event) {
+export default function TodoItem({ todo, updateList }: TodoItemProps) {
+  const [todoTitle, setTodoTitle] = useState<string>(todo.title);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [error, setError] = useState<{ message?: string }>();
+
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
     setTodoTitle(event.target.value);
   }
 
@@ -19,7 +24,7 @@ export default function Todo({ todo, updateList }) {
     setIsEditing((editing) => !editing);
   }
 
-  async function handleClickEditTodo(event) {
+  async function handleClickEditTodo(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (todo.title === todoTitle) {
       setIsEditing(false);
@@ -33,16 +38,20 @@ export default function Todo({ todo, updateList }) {
     try {
       await editTodo(todo.id, { title: todoTitle });
       updateList();
-      setError();
-    } catch (error) {
-      setError({ message: error.message || 'error with edit task' });
+      setError({});
+    } catch (error: unknown) {
+      if (typeof error === 'string') {
+        setError({ message: error });
+      } else if (error instanceof Error) {
+        setError({ message: error.message });
+      } else setError({ message: 'error with add new task' });
     }
     setIsEditing(false);
   }
 
   function handleClickCloseEditing() {
     setIsEditing(false);
-    setError();
+    setError({});
     setTodoTitle(todo.title);
   }
 
@@ -50,9 +59,13 @@ export default function Todo({ todo, updateList }) {
     try {
       await deleteTask(todo.id);
       updateList();
-      setError();
-    } catch (error) {
-      setError({ message: error.message || 'error with delete task' });
+      setError({});
+    } catch (error: unknown) {
+      if (typeof error === 'string') {
+        setError({ message: error });
+      } else if (error instanceof Error) {
+        setError({ message: error.message });
+      } else setError({ message: 'error with add new task' });
     }
   }
 
@@ -60,9 +73,13 @@ export default function Todo({ todo, updateList }) {
     try {
       await editTodo(todo.id, { isDone: !todo.isDone });
       updateList();
-      setError();
-    } catch (error) {
-      setError({ message: error.message || 'error with edit task' });
+      setError({});
+    } catch (error: unknown) {
+      if (typeof error === 'string') {
+        setError({ message: error });
+      } else if (error instanceof Error) {
+        setError({ message: error.message });
+      } else setError({ message: 'error with add new task' });
     }
   }
 

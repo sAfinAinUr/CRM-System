@@ -3,6 +3,7 @@ import { getTodoList } from '../api/http';
 import TodoList from '../components/TodoList';
 import TodoListFilterStatusMenu from '../components/TodoListFilterStatusMenu';
 import AddTodo from '../components/AddTodo';
+import { MetaResponse, Todo, TodoInfo, FilterStatus } from '../types/types.ts';
 
 import styles from './TodoListPage.module.scss';
 
@@ -13,21 +14,25 @@ const DEFAULT_LIST_INFO = {
 };
 
 export default function TodoListPage() {
-  const [todoList, setTodoList] = useState([]);
-  const [isFetching, setIsFetching] = useState(false);
-  const [filterStatusOfTaskList, setFilterStatusOfTaskList] = useState('all');
-  const [todoListInfo, setrTodoListInfo] = useState(DEFAULT_LIST_INFO);
-  const [error, setError] = useState();
+  const [todoList, setTodoList] = useState<Todo[]>([]);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [filterStatusOfTaskList, setFilterStatusOfTaskList] = useState<FilterStatus>('all');
+  const [todoListInfo, setTodoListInfo] = useState<TodoInfo>(DEFAULT_LIST_INFO);
+  const [error, setError] = useState<{ message: string } | null>();
 
-  async function fetchTodoData() {
+  async function fetchTodoData(): Promise<void> {
     setIsFetching(true);
-    setError();
+    setError(null);
     try {
-      const response = await getTodoList(filterStatusOfTaskList);
+      const response: MetaResponse<Todo, TodoInfo> = await getTodoList(filterStatusOfTaskList);
       setTodoList(response.data);
-      setrTodoListInfo(response.info);
-    } catch (error) {
-      setError({ message: error.message || 'Failed to fetch list' });
+      setTodoListInfo(response.info || DEFAULT_LIST_INFO);
+    } catch (error: unknown) {
+      if (typeof error === 'string') {
+        setError({ message: error });
+      } else if (error instanceof Error) {
+        setError({ message: error.message });
+      } else setError({ message: 'error with add new task' });
     } finally {
       setIsFetching(false);
     }
@@ -37,7 +42,7 @@ export default function TodoListPage() {
     fetchTodoData();
   }, [filterStatusOfTaskList]);
 
-  function handleClickSelectTasks(selectedButton) {
+  function handleClickSelectTasks(selectedButton: FilterStatus) {
     setFilterStatusOfTaskList(selectedButton);
   }
   return (
