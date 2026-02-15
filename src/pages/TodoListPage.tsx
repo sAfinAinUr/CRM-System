@@ -5,7 +5,7 @@ import TodoListFilterStatusMenu from '../components/TodoListFilterStatusMenu';
 import AddTodo from '../components/AddTodo';
 import { MetaResponse, Todo, TodoInfo, FilterStatus } from '../types/types.ts';
 
-import styles from './TodoListPage.module.scss';
+import { Alert, Flex, Spin } from 'antd';
 
 const DEFAULT_LIST_INFO = {
   all: 0,
@@ -48,19 +48,16 @@ export default function TodoListPage() {
   return (
     <>
       <AddTodo updateList={fetchTodoData} />
-      <section className={styles.content}>
-        <TodoListFilterStatusMenu
-          listInfo={todoListInfo}
-          handleClick={handleClickSelectTasks}
-          filterStatus={filterStatusOfTaskList}
-        />
-        {error && <p>{error.message}</p>}
-        {!error && isFetching ? (
-          <p>Loading...</p>
-        ) : (
-          <TodoList list={todoList} updateList={fetchTodoData} />
-        )}
-      </section>
+      <TodoListFilterStatusMenu listInfo={todoListInfo} handleClick={handleClickSelectTasks} />
+      {error ? (
+        <Alert title={error.message} type="error" showIcon />
+      ) : isFetching ? (
+        <Flex justify="center" align="center" style={{ minHeight: '400px' }}>
+          <Spin size="large" tip="Загрузка задач..." />
+        </Flex>
+      ) : (
+        <TodoList list={todoList} updateList={fetchTodoData} />
+      )}
     </>
   );
 }

@@ -1,30 +1,27 @@
-import { ChangeEvent, ClipboardEvent, FormEvent, memo, useState } from 'react';
+import { memo, useState } from 'react';
 import { addNewTodo } from '../api/http';
-import { verifyTodoText } from '../helpers/verify';
-
-import styles from './AddTodo.module.scss';
+import { Button, Form, Input, message } from 'antd';
 
 type AddTodoProps = {
   updateList: () => Promise<void>;
 };
 
+interface AddTodoFieldType {
+  todoName?: string;
+}
+
 export default memo(function AddTodo({ updateList }: AddTodoProps) {
-  const [todoText, setTodoText] = useState<string>('');
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [error, setError] = useState<{ message?: string }>();
 
-  async function handleAddTodo(event: FormEvent<HTMLFormElement>): Promise<void> {
-    event.preventDefault();
-    const verify = verifyTodoText(todoText);
-    if (verify.isNotValid) {
-      setError({ message: verify.message });
-      return;
-    }
+  async function handleAddTodo(event: AddTodoFieldType): Promise<void> {
+    message.success('Submit success!');
+    console.log(event.todoName);
     try {
       setIsDisabled(true);
-      await addNewTodo(todoText);
+      await addNewTodo(event.todoName!);
+      form.resetFields();
       updateList();
-      setTodoText('');
     } catch (error: unknown) {
       if (typeof error === 'string') {
         setError({ message: error });
@@ -36,32 +33,48 @@ export default memo(function AddTodo({ updateList }: AddTodoProps) {
     }
   }
 
-  function handleChange(event: ChangeEvent<HTMLInputElement>) {
-    setTodoText(event.target.value);
-    setError({});
-  }
+  const [form] = Form.useForm();
 
-  function handlePaste(event: ClipboardEvent<HTMLInputElement>) {
-    setTodoText(event.currentTarget.value);
-    setError({});
-  }
+  const onFinishFailed = () => {
+    message.error('Submit failed!');
+  };
 
   return (
     <>
       <p>{error && error.message}</p>
-      <form className={styles.addTodoForm} onSubmit={handleAddTodo}>
-        <input
-          id="inputAddText"
-          type="text"
-          value={todoText}
-          onChange={handleChange}
-          placeholder="task name"
-          onPaste={handlePaste}
-          required></input>
-        <button type="submit" disabled={isDisabled}>
-          Add
-        </button>
-      </form>
+      <Form
+        form={form}
+        size="large"
+        layout="inline"
+        onFinish={handleAddTodo}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off">
+        <Form.Item
+          name="todoName"
+          rules={[
+            { required: true, message: 'Поле обязательно для заполнения' },
+            {
+              validator: (_, value) => {
+                const trimmedValue = value?.trim() || '';
+
+                if (trimmedValue.length > 0 && trimmedValue.length < 2) {
+                  return Promise.reject(new Error('Минимум 2 символа (не считая пробелы)'));
+                }
+                if (trimmedValue.length > 64) {
+                  return Promise.reject(new Error('Максимум 64 символа'));
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}>
+          <Input placeholder="Название задачи" />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" disabled={isDisabled}>
+            Добавить
+          </Button>
+        </Form.Item>
+      </Form>
     </>
   );
 });
