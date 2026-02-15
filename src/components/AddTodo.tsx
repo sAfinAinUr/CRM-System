@@ -1,5 +1,5 @@
 import { memo, useState } from 'react';
-import { addNewTodo } from '../api/http';
+import { addNewTodo, getErrorMessage } from '../api/http';
 import { Button, Form, Input, message } from 'antd';
 
 type AddTodoProps = {
@@ -12,22 +12,16 @@ interface AddTodoFieldType {
 
 export default memo(function AddTodo({ updateList }: AddTodoProps) {
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
-  const [error, setError] = useState<{ message?: string }>();
 
   async function handleAddTodo(event: AddTodoFieldType): Promise<void> {
-    message.success('Submit success!');
-    console.log(event.todoName);
     try {
       setIsDisabled(true);
       await addNewTodo(event.todoName!);
+      await updateList();
       form.resetFields();
-      updateList();
+      message.success('Задача успешно добавлена!');
     } catch (error: unknown) {
-      if (typeof error === 'string') {
-        setError({ message: error });
-      } else if (error instanceof Error) {
-        setError({ message: error.message });
-      } else setError({ message: 'error with add new task' });
+      message.error(getErrorMessage(error));
     } finally {
       setIsDisabled(false);
     }
@@ -36,12 +30,10 @@ export default memo(function AddTodo({ updateList }: AddTodoProps) {
   const [form] = Form.useForm();
 
   const onFinishFailed = () => {
-    message.error('Submit failed!');
+    message.error('Не удалось добавить задачу');
   };
-
   return (
     <>
-      <p>{error && error.message}</p>
       <Form
         form={form}
         size="large"

@@ -1,5 +1,5 @@
-import { ChangeEvent, useState } from 'react';
-import { deleteTask, editTodo } from '../api/http';
+import { useState } from 'react';
+import { deleteTask, editTodo, getErrorMessage } from '../api/http';
 import { Todo } from '../types/types.ts';
 import { Button, Form, Input, message, Checkbox, Popconfirm, Space, Card, Flex } from 'antd';
 import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons';
@@ -15,7 +15,6 @@ interface EditTodoFieldType {
 
 export default function TodoItem({ todo, updateList }: TodoItemProps) {
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [error, setError] = useState<{ message?: string }>();
 
   function handleClickStartEdit() {
     setIsEditing((editing) => !editing);
@@ -29,33 +28,22 @@ export default function TodoItem({ todo, updateList }: TodoItemProps) {
     try {
       await editTodo(todo.id, { title: event.todoName });
       updateList();
-      setError({});
       setIsEditing(false);
     } catch (error: unknown) {
-      if (typeof error === 'string') {
-        setError({ message: error });
-      } else if (error instanceof Error) {
-        setError({ message: error.message });
-      } else setError({ message: 'error with add new task' });
+      message.error(getErrorMessage(error));
     }
   }
 
   function handleClickCloseEditing() {
     setIsEditing(false);
-    setError({});
   }
 
   async function handleClickDeleteTask() {
     try {
       await deleteTask(todo.id);
       updateList();
-      setError({});
     } catch (error: unknown) {
-      if (typeof error === 'string') {
-        setError({ message: error });
-      } else if (error instanceof Error) {
-        setError({ message: error.message });
-      } else setError({ message: 'error with add new task' });
+      message.error(getErrorMessage(error));
     }
   }
 
@@ -63,13 +51,8 @@ export default function TodoItem({ todo, updateList }: TodoItemProps) {
     try {
       await editTodo(todo.id, { isDone: !todo.isDone });
       updateList();
-      setError({});
     } catch (error: unknown) {
-      if (typeof error === 'string') {
-        setError({ message: error });
-      } else if (error instanceof Error) {
-        setError({ message: error.message });
-      } else setError({ message: 'error with add new task' });
+      message.error(getErrorMessage(error));
     }
   }
 
@@ -84,7 +67,6 @@ export default function TodoItem({ todo, updateList }: TodoItemProps) {
       <Flex align="center" justify="space-between" style={{ width: '100%' }}>
         {isEditing ? (
           <>
-            <p>{error && error.message}</p>
             <Form
               form={form}
               preserve={false}
