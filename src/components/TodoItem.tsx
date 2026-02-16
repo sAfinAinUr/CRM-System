@@ -18,17 +18,20 @@ import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined } from '@ant
 type TodoItemProps = {
   todo: Todo;
   updateList: () => Promise<void>;
+  onStartEdit: () => void;
+  onStopEdit: () => void;
 };
 
 interface EditTodoFieldType {
   todoName?: string;
 }
 
-export default function TodoItem({ todo, updateList }: TodoItemProps) {
+export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: TodoItemProps) {
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
   function handleClickStartEdit() {
     setIsEditing((editing) => !editing);
+    onStartEdit();
   }
 
   async function handleClickEditTodo(event: EditTodoFieldType) {
@@ -40,6 +43,7 @@ export default function TodoItem({ todo, updateList }: TodoItemProps) {
       await editTodo(todo.id, { title: event.todoName });
       updateList();
       setIsEditing(false);
+      onStopEdit();
     } catch (error: unknown) {
       message.error(getErrorMessage(error));
     }
@@ -47,6 +51,7 @@ export default function TodoItem({ todo, updateList }: TodoItemProps) {
 
   function handleClickCloseEditing() {
     setIsEditing(false);
+    onStopEdit();
   }
 
   async function handleClickDeleteTask() {

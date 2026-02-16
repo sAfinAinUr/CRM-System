@@ -13,13 +13,14 @@ const DEFAULT_LIST_INFO = {
   completed: 0,
   inWork: 0,
 };
-const refetchTodoListInterval = 5 * 1000;
+const refetchTodoListInterval = 5000;
 
 export default function TodoListPage() {
   const [todoList, setTodoList] = useState<Todo[]>([]);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [filterStatusOfTaskList, setFilterStatusOfTaskList] = useState<FilterStatus>('all');
   const [todoListInfo, setTodoListInfo] = useState<TodoInfo>(DEFAULT_LIST_INFO);
+  const [isEditingAnyTask, setIsEditingAnyTask] = useState<boolean>(false);
 
   const refetchTodoListIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -35,16 +36,22 @@ export default function TodoListPage() {
       setIsFetching(false);
     }
   }
-
+  const handleStartEdit = () => setIsEditingAnyTask(true);
+  const handleStopEdit = () => setIsEditingAnyTask(false);
   useEffect(() => {
     fetchTodoData();
-    refetchTodoListIntervalRef.current = setInterval(fetchTodoData, refetchTodoListInterval);
+  }, [filterStatusOfTaskList]);
+  useEffect(() => {
+    if (!isEditingAnyTask) {
+      refetchTodoListIntervalRef.current = setInterval(fetchTodoData, refetchTodoListInterval);
+    }
     return () => {
       if (refetchTodoListIntervalRef.current) {
         clearInterval(refetchTodoListIntervalRef.current);
+        refetchTodoListIntervalRef.current = null;
       }
     };
-  }, [filterStatusOfTaskList]);
+  }, [filterStatusOfTaskList, isEditingAnyTask]);
 
   function handleClickSelectTasks(selectedButton: FilterStatus) {
     setFilterStatusOfTaskList(selectedButton);
@@ -58,7 +65,12 @@ export default function TodoListPage() {
           <Spin size="large" />
         </Flex>
       ) : (
-        <TodoList list={todoList} updateList={fetchTodoData} />
+        <TodoList
+          list={todoList}
+          updateList={fetchTodoData}
+          onStartEdit={handleStartEdit}
+          onStopEdit={handleStopEdit}
+        />
       )}
     </LayoutPage>
   );
