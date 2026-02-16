@@ -44,11 +44,14 @@ export default memo(function AddTodo({ updateList }: AddTodoProps) {
         <Form.Item
           name="todoName"
           rules={[
-            { required: true, message: 'Поле обязательно для заполнения' },
+            {
+              required: true,
+              whitespace: true,
+              message: 'Поле не должно быть пустым или состоять из пробелов',
+            },
             {
               validator: (_, value) => {
                 const trimmedValue = value?.trim() || '';
-
                 if (trimmedValue.length > 0 && trimmedValue.length < 2) {
                   return Promise.reject(new Error('Минимум 2 символа (не считая пробелы)'));
                 }

@@ -91,7 +91,25 @@ export default function TodoItem({ todo, updateList }: TodoItemProps) {
               autoComplete="off">
               <Form.Item
                 name="todoName"
-                rules={[{ required: true }, { type: 'string', min: 2, max: 64, whitespace: true }]}>
+                rules={[
+                  {
+                    required: true,
+                    whitespace: true,
+                    message: 'Поле не должно быть пустым или состоять из пробелов',
+                  },
+                  {
+                    validator: (_, value) => {
+                      const trimmedValue = value?.trim() || '';
+                      if (trimmedValue.length > 0 && trimmedValue.length < 2) {
+                        return Promise.reject(new Error('Минимум 2 символа (не считая пробелы)'));
+                      }
+                      if (trimmedValue.length > 64) {
+                        return Promise.reject(new Error('Максимум 64 символа'));
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}>
                 <Input placeholder="Название задачи" />
               </Form.Item>
               <Form.Item>

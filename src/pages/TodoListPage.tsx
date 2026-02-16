@@ -13,7 +13,7 @@ const DEFAULT_LIST_INFO = {
   completed: 0,
   inWork: 0,
 };
-const refetchTodoListInterval = 5 * 1000 * 60;
+const refetchTodoListInterval = 5 * 1000;
 
 export default function TodoListPage() {
   const [todoList, setTodoList] = useState<Todo[]>([]);
