@@ -1,7 +1,18 @@
 import { useState } from 'react';
 import { deleteTask, editTodo, getErrorMessage } from '../api/http';
 import { Todo } from '../types/types.ts';
-import { Button, Form, Input, message, Checkbox, Popconfirm, Space, Card, Flex } from 'antd';
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Checkbox,
+  Popconfirm,
+  Space,
+  Card,
+  Flex,
+  Typography,
+} from 'antd';
 import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons';
 
 type TodoItemProps = {
@@ -105,17 +116,16 @@ export default function TodoItem({ todo, updateList }: TodoItemProps) {
           </>
         ) : (
           <>
-            <Checkbox
-              checked={todo.isDone}
-              styles={{
-                label: {
-                  textDecoration: todo.isDone ? 'line-through' : 'none',
+            <Checkbox checked={todo.isDone} onChange={handleChangeIsDone}>
+              <Typography.Text
+                style={{
                   color: todo.isDone ? 'gray' : 'inherit',
-                  transition: 'all 0.3s',
-                },
-              }}
-              onChange={handleChangeIsDone}>
-              {todo.title}
+                  textDecoration: todo.isDone ? 'line-through' : 'none',
+                  maxWidth: 'calc(400px - 168px)',
+                }}
+                ellipsis={{ tooltip: todo.title }}>
+                {todo.title}
+              </Typography.Text>
             </Checkbox>
             <Space>
               <Button

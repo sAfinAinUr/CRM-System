@@ -9,7 +9,7 @@ const api = axios.create({
 });
 
 export async function addNewTodo(title: string): Promise<Todo> {
-  const response = await api.post<Todo>('/13todos', { title });
+  const response = await api.post<Todo>('/todos', { title });
   return response.data;
 }
 
