@@ -56,11 +56,12 @@ export default function TodoListPage() {
   function handleClickSelectTasks(selectedButton: FilterStatus) {
     setFilterStatusOfTaskList(selectedButton);
   }
+
   return (
     <LayoutPage>
       <AddTodo updateList={fetchTodoData} />
       <TodoListFilterStatusMenu listInfo={todoListInfo} handleClick={handleClickSelectTasks} />
-      {isFetching ? (
+      {isFetching && todoList.length === 0 ? (
         <Flex justify="center" align="center" style={{ minHeight: '400px' }}>
           <Spin size="large" />
         </Flex>
