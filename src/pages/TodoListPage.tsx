@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { getErrorMessage, getTodoList } from '../api/http';
 import TodoList from '../components/TodoList';
 import TodoListFilterStatusMenu from '../components/TodoListFilterStatusMenu';
@@ -24,7 +24,7 @@ export default function TodoListPage() {
 
   const refetchTodoListIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  async function fetchTodoData(): Promise<void> {
+  const fetchTodoData = useCallback(async (): Promise<void> => {
     setIsFetching(true);
     try {
       const response: MetaResponse<Todo, TodoInfo> = await getTodoList(filterStatusOfTaskList);
@@ -35,7 +35,7 @@ export default function TodoListPage() {
     } finally {
       setIsFetching(false);
     }
-  }
+  }, [filterStatusOfTaskList]);
   const handleStartEdit = () => setIsEditingAnyTask(true);
   const handleStopEdit = () => setIsEditingAnyTask(false);
   useEffect(() => {
