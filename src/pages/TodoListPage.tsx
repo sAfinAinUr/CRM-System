@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { getErrorMessage, getTodoList } from '../api/http';
+import { getTodoList } from '../api/http';
 import TodoList from '../components/TodoList';
 import TodoListFilterStatusMenu from '../components/TodoListFilterStatusMenu';
 import AddTodo from '../components/AddTodo';
@@ -7,6 +7,7 @@ import { MetaResponse, Todo, TodoInfo, FilterStatus } from '../types/types.ts';
 
 import { Flex, message, Spin } from 'antd';
 import LayoutPage from './LayoutPage.tsx';
+import { getErrorMessage } from '../helpers/getErrorMessage.ts';
 
 const DEFAULT_LIST_INFO = {
   all: 0,

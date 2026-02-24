@@ -25,16 +25,6 @@ export async function editTodo(id: number, todoRequest: TodoRequest): Promise<To
   return response.data;
 }
 
-export async function deleteTask(id: number): Promise<void> {
+export async function deleteTodo(id: number): Promise<void> {
   await api.delete(`/todos/${id}`);
-}
-
-export function getErrorMessage(error: unknown): string {
-  if (axios.isAxiosError(error)) {
-    return error.response?.data?.message || error.message || 'Ошибка сервера';
-  }
-  if (error instanceof Error) {
-    return error.message;
-  }
-  return 'Произошла непредвиденная ошибка';
 }

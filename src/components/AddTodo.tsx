@@ -1,7 +1,7 @@
 import { memo, useState } from 'react';
-import { addNewTodo, getErrorMessage } from '../api/http';
-import { Button, Form, Input, message } from 'antd';
-
+import { addNewTodo } from '../api/http';
+import { Button, Form, Input, notification } from 'antd';
+import { getErrorMessage } from '../helpers/getErrorMessage';
 type AddTodoProps = {
   updateList: () => Promise<void>;
 };
@@ -13,15 +13,26 @@ interface AddTodoFieldType {
 export default memo(function AddTodo({ updateList }: AddTodoProps) {
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
-  async function handleAddTodo(event: AddTodoFieldType): Promise<void> {
+  async function handleAddTodo(values: AddTodoFieldType): Promise<void> {
     try {
       setIsDisabled(true);
-      await addNewTodo(event.todoName!);
+      await addNewTodo(values.todoName!);
       await updateList();
       form.resetFields();
-      message.success('Задача успешно добавлена!');
+      notification.success({
+        title: 'Успешно',
+        description: 'Задача добавлена в список!',
+        placement: 'top',
+        style: {
+          position: 'static',
+        },
+      });
     } catch (error: unknown) {
-      message.error(getErrorMessage(error));
+      notification.error({
+        title: 'Ошибка добавления',
+        description: getErrorMessage(error),
+        placement: 'top',
+      });
     } finally {
       setIsDisabled(false);
     }
@@ -30,7 +41,14 @@ export default memo(function AddTodo({ updateList }: AddTodoProps) {
   const [form] = Form.useForm();
 
   const onFinishFailed = () => {
-    message.error('Не удалось добавить задачу');
+    notification.error({
+      title: 'Ошибка добавления',
+      description: 'Не удалось добавить задачу',
+      placement: 'top',
+      style: {
+        position: 'static',
+      },
+    });
   };
   return (
     <>

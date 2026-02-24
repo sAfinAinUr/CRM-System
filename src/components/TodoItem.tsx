@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { deleteTask, editTodo, getErrorMessage } from '../api/http';
+import { deleteTodo, editTodo } from '../api/http';
 import { Todo } from '../types/types.ts';
 import {
   Button,
@@ -14,6 +14,7 @@ import {
   Typography,
 } from 'antd';
 import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons';
+import { getErrorMessage } from '../helpers/getErrorMessage.ts';
 
 type TodoItemProps = {
   todo: Todo;
@@ -56,7 +57,7 @@ export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: 
 
   async function handleClickDeleteTask() {
     try {
-      await deleteTask(todo.id);
+      await deleteTodo(todo.id);
       updateList();
     } catch (error: unknown) {
       message.error(getErrorMessage(error));
