@@ -8,7 +8,7 @@ const api = axios.create({
   },
 });
 
-export async function addNewTodo(title: string): Promise<Todo> {
+export async function addTodo(title: string): Promise<Todo> {
   const response = await api.post<Todo>('/todos', { title });
   return response.data;
 }
@@ -20,7 +20,7 @@ export async function getTodoList(filter: FilterStatus): Promise<MetaResponse<To
   return response.data;
 }
 
-export async function editTodo(id: number, todoRequest: TodoRequest): Promise<Todo> {
+export async function updateTodo(id: number, todoRequest: TodoRequest): Promise<Todo> {
   const response = await api.put<Todo>(`/todos/${id}`, todoRequest);
   return response.data;
 }
