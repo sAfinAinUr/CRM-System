@@ -22,7 +22,6 @@ export default memo(function AddTodo({ updateList }: AddTodoProps) {
       notification.success({
         title: 'Успешно',
         description: 'Задача добавлена в список!',
-        placement: 'top',
         style: {
           position: 'static',
         },
@@ -31,7 +30,6 @@ export default memo(function AddTodo({ updateList }: AddTodoProps) {
       notification.error({
         title: 'Ошибка добавления',
         description: getErrorMessage(error),
-        placement: 'top',
       });
     } finally {
       setIsDisabled(false);
@@ -44,7 +42,6 @@ export default memo(function AddTodo({ updateList }: AddTodoProps) {
     notification.error({
       title: 'Ошибка добавления',
       description: 'Не удалось добавить задачу',
-      placement: 'top',
       style: {
         position: 'static',
       },
