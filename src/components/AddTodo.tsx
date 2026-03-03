@@ -1,5 +1,5 @@
 import { memo, useState } from 'react';
-import { addNewTodo } from '../api/http';
+import { addTodo } from '../api/http';
 import { Button, Form, Input, notification } from 'antd';
 import { getErrorMessage } from '../helpers/getErrorMessage';
 type AddTodoProps = {
@@ -16,7 +16,7 @@ export default memo(function AddTodo({ updateList }: AddTodoProps) {
   async function handleAddTodo(values: AddTodoFieldType): Promise<void> {
     try {
       setIsDisabled(true);
-      await addNewTodo(values.todoName!);
+      await addTodo(values.todoName!);
       await updateList();
       form.resetFields();
       notification.success({

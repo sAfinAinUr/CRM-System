@@ -20,7 +20,7 @@ export async function getTodoList(filter: FilterStatus): Promise<MetaResponse<To
   return response.data;
 }
 
-export async function updateTodo(id: number, todoRequest: TodoRequest): Promise<Todo> {
+export async function editTodo(id: number, todoRequest: TodoRequest): Promise<Todo> {
   const response = await api.put<Todo>(`/todos/${id}`, todoRequest);
   return response.data;
 }
