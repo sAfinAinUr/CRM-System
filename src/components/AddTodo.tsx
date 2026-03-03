@@ -1,67 +1,90 @@
-import { ChangeEvent, ClipboardEvent, FormEvent, memo, useState } from 'react';
-import { addNewTodo } from '../api/http';
-import { verifyTodoText } from '../helpers/verify';
-
-import styles from './AddTodo.module.scss';
-
+import { memo, useState } from 'react';
+import { addTodo } from '../api/http';
+import { Button, Form, Input, notification } from 'antd';
+import { getErrorMessage } from '../helpers/getErrorMessage';
 type AddTodoProps = {
   updateList: () => Promise<void>;
 };
 
-export default memo(function AddTodo({ updateList }: AddTodoProps) {
-  const [todoText, setTodoText] = useState<string>('');
-  const [isDisabled, setIsDisabled] = useState<boolean>(false);
-  const [error, setError] = useState<{ message?: string }>();
+interface AddTodoFieldType {
+  todoName?: string;
+}
 
-  async function handleAddTodo(event: FormEvent<HTMLFormElement>): Promise<void> {
-    event.preventDefault();
-    const verify = verifyTodoText(todoText);
-    if (verify.isNotValid) {
-      setError({ message: verify.message });
-      return;
-    }
+export default memo(function AddTodo({ updateList }: AddTodoProps) {
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
+
+  async function handleAddTodo(values: AddTodoFieldType): Promise<void> {
     try {
       setIsDisabled(true);
-      await addNewTodo(todoText);
-      updateList();
-      setTodoText('');
+      await addTodo(values.todoName!);
+      await updateList();
+      form.resetFields();
+      notification.success({
+        title: 'Успешно',
+        description: 'Задача добавлена в список!',
+        style: {
+          position: 'static',
+        },
+      });
     } catch (error: unknown) {
-      if (typeof error === 'string') {
-        setError({ message: error });
-      } else if (error instanceof Error) {
-        setError({ message: error.message });
-      } else setError({ message: 'error with add new task' });
+      notification.error({
+        title: 'Ошибка добавления',
+        description: getErrorMessage(error),
+      });
     } finally {
       setIsDisabled(false);
     }
   }
 
-  function handleChange(event: ChangeEvent<HTMLInputElement>) {
-    setTodoText(event.target.value);
-    setError({});
-  }
+  const [form] = Form.useForm();
 
-  function handlePaste(event: ClipboardEvent<HTMLInputElement>) {
-    setTodoText(event.currentTarget.value);
-    setError({});
-  }
-
+  const onFinishFailed = () => {
+    notification.error({
+      title: 'Ошибка добавления',
+      description: 'Не удалось добавить задачу',
+      style: {
+        position: 'static',
+      },
+    });
+  };
   return (
     <>
-      <p>{error && error.message}</p>
-      <form className={styles.addTodoForm} onSubmit={handleAddTodo}>
-        <input
-          id="inputAddText"
-          type="text"
-          value={todoText}
-          onChange={handleChange}
-          placeholder="task name"
-          onPaste={handlePaste}
-          required></input>
-        <button type="submit" disabled={isDisabled}>
-          Add
-        </button>
-      </form>
+      <Form
+        form={form}
+        size="large"
+        layout="inline"
+        onFinish={handleAddTodo}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off">
+        <Form.Item
+          name="todoName"
+          rules={[
+            {
+              required: true,
+              whitespace: true,
+              message: 'Поле не должно быть пустым или состоять из пробелов',
+            },
+            {
+              validator: (_, value) => {
+                const trimmedValue = value?.trim() || '';
+                if (trimmedValue.length > 0 && trimmedValue.length < 2) {
+                  return Promise.reject(new Error('Минимум 2 символа (не считая пробелы)'));
+                }
+                if (trimmedValue.length > 64) {
+                  return Promise.reject(new Error('Максимум 64 символа'));
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}>
+          <Input placeholder="Название задачи" />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" disabled={isDisabled}>
+            Добавить
+          </Button>
+        </Form.Item>
+      </Form>
     </>
   );
 });

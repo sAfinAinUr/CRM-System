@@ -1,34 +1,35 @@
-import styles from './TodoListFilterStatusMenu.module.scss';
 import { TodoInfo, FilterStatus } from '../types/types.ts';
+import { Tabs } from 'antd';
+import type { TabsProps } from 'antd';
 
 type TodoListFilterStatusMenuProps = {
   listInfo: TodoInfo;
   handleClick: (selectedButton: FilterStatus) => void;
-  filterStatus: FilterStatus;
 };
 
 export default function TodoListFilterStatusMenu({
   listInfo,
   handleClick,
-  filterStatus,
 }: TodoListFilterStatusMenuProps) {
+  const items: (Omit<NonNullable<TabsProps['items']>[number], 'key'> & { key: FilterStatus })[] = [
+    {
+      key: 'all',
+      label: `Все(${listInfo.all})`,
+    },
+    {
+      key: 'inWork',
+      label: `В работе(${listInfo.inWork})`,
+    },
+    {
+      key: 'completed',
+      label: `Выполнено(${listInfo.completed})`,
+    },
+  ];
+
+  const onChange = (key: string) => {
+    handleClick(key as FilterStatus);
+  };
   return (
-    <nav className={styles.filterMenu}>
-      <button
-        className={filterStatus === 'all' ? styles.active : undefined}
-        onClick={() => handleClick('all')}>
-        Все({listInfo.all})
-      </button>
-      <button
-        className={filterStatus === 'inWork' ? styles.active : undefined}
-        onClick={() => handleClick('inWork')}>
-        В работе({listInfo.inWork})
-      </button>
-      <button
-        className={filterStatus === 'completed' ? styles.active : undefined}
-        onClick={() => handleClick('completed')}>
-        Выполнено({listInfo.completed})
-      </button>
-    </nav>
+    <Tabs style={{ marginTop: 16 }} defaultActiveKey="all" items={items} onChange={onChange} />
   );
 }

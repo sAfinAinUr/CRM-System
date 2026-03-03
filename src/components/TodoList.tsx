@@ -1,18 +1,26 @@
+import { Flex } from 'antd';
 import TodoItem from './TodoItem.jsx';
-import styles from './TodoList.module.scss';
 import { Todo } from '../types/types.ts';
 
 type TodoListProps = {
   list: Todo[];
   updateList: () => Promise<void>;
+  onStartEdit: () => void;
+  onStopEdit: () => void;
 };
 
-export default function TodoList({ list, updateList }: TodoListProps) {
+export default function TodoList({ list, updateList, onStartEdit, onStopEdit }: TodoListProps) {
   return (
-    <ul className={styles.todoList}>
+    <Flex vertical align="center" gap="small" style={{ width: '100%' }}>
       {list.map((todo) => (
-        <TodoItem key={todo.id} todo={todo} updateList={updateList} />
+        <TodoItem
+          key={todo.id}
+          todo={todo}
+          updateList={updateList}
+          onStartEdit={onStartEdit}
+          onStopEdit={onStopEdit}
+        />
       ))}
-    </ul>
+    </Flex>
   );
 }

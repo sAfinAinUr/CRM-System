@@ -1,71 +1,66 @@
-import { ChangeEvent, FormEvent, useState } from 'react';
-import { deleteTask, editTodo } from '../api/http';
-import { verifyTodoText } from '../helpers/verify';
+import { useState } from 'react';
+import { deleteTodo, editTodo } from '../api/http';
 import { Todo } from '../types/types.ts';
-import IconButton from '../ui/IconButton/IconButton';
-
-import styles from './Todo.module.scss';
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Checkbox,
+  Popconfirm,
+  Space,
+  Card,
+  Flex,
+  Typography,
+} from 'antd';
+import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons';
+import { getErrorMessage } from '../helpers/getErrorMessage.ts';
 
 type TodoItemProps = {
   todo: Todo;
   updateList: () => Promise<void>;
+  onStartEdit: () => void;
+  onStopEdit: () => void;
 };
 
-export default function TodoItem({ todo, updateList }: TodoItemProps) {
-  const [todoTitle, setTodoTitle] = useState<string>(todo.title);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [error, setError] = useState<{ message?: string }>();
+interface EditTodoFieldType {
+  todoName?: string;
+}
 
-  function handleChange(event: ChangeEvent<HTMLInputElement>) {
-    setTodoTitle(event.target.value);
-  }
+export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: TodoItemProps) {
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   function handleClickStartEdit() {
     setIsEditing((editing) => !editing);
+    onStartEdit();
   }
 
-  async function handleClickEditTodo(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (todo.title === todoTitle) {
+  async function handleClickEditTodo(event: EditTodoFieldType) {
+    if (todo.title === event.todoName) {
       setIsEditing(false);
       return;
     }
-    const verify = verifyTodoText(todoTitle);
-    if (verify.isNotValid) {
-      setError({ message: verify.message });
-      return;
-    }
     try {
-      await editTodo(todo.id, { title: todoTitle });
+      await editTodo(todo.id, { title: event.todoName });
       updateList();
-      setError({});
+      setIsEditing(false);
+      onStopEdit();
     } catch (error: unknown) {
-      if (typeof error === 'string') {
-        setError({ message: error });
-      } else if (error instanceof Error) {
-        setError({ message: error.message });
-      } else setError({ message: 'error with add new task' });
+      message.error(getErrorMessage(error));
     }
-    setIsEditing(false);
   }
 
   function handleClickCloseEditing() {
     setIsEditing(false);
-    setError({});
-    setTodoTitle(todo.title);
+    onStopEdit();
   }
 
   async function handleClickDeleteTask() {
     try {
-      await deleteTask(todo.id);
+      await deleteTodo(todo.id);
       updateList();
-      setError({});
     } catch (error: unknown) {
-      if (typeof error === 'string') {
-        setError({ message: error });
-      } else if (error instanceof Error) {
-        setError({ message: error.message });
-      } else setError({ message: 'error with add new task' });
+      message.error(getErrorMessage(error));
     }
   }
 
@@ -73,46 +68,108 @@ export default function TodoItem({ todo, updateList }: TodoItemProps) {
     try {
       await editTodo(todo.id, { isDone: !todo.isDone });
       updateList();
-      setError({});
     } catch (error: unknown) {
-      if (typeof error === 'string') {
-        setError({ message: error });
-      } else if (error instanceof Error) {
-        setError({ message: error.message });
-      } else setError({ message: 'error with add new task' });
+      message.error(getErrorMessage(error));
     }
   }
 
+  const [form] = Form.useForm();
+
+  const onFinishFailed = () => {
+    message.error('Submit failed!');
+  };
+
   return (
-    <li>
-      {isEditing ? (
-        <form onSubmit={handleClickEditTodo} className={styles.formEdit}>
-          <p>{error && error.message}</p>
-          <div className={styles.groupCheckBoxAndTodoTitle}>
-            <input type="text" value={todoTitle} onChange={handleChange} required />
-          </div>
-          <div className={styles.groupIconButtons}>
-            <IconButton variant="primary" icon="ok" type="submit" />
-            <IconButton
-              variant="secondary"
-              icon="close"
-              onClick={handleClickCloseEditing}
-              type="button"
-            />
-          </div>
-        </form>
-      ) : (
-        <>
-          <div className={styles.groupCheckBoxAndTodoTitle}>
-            <input type="checkbox" checked={todo.isDone} onChange={handleChangeIsDone}></input>
-            <span className={todo.isDone ? styles.isDone : undefined}>{todo.title}</span>
-          </div>
-          <div className={styles.groupIconButtons}>
-            <IconButton icon="edit" onClick={handleClickStartEdit} />
-            <IconButton variant="danger" icon="delete" onClick={handleClickDeleteTask} />
-          </div>
-        </>
-      )}
-    </li>
+    <Card style={{ width: 400 }}>
+      <Flex align="center" justify="space-between" style={{ width: '100%' }}>
+        {isEditing ? (
+          <>
+            <Form
+              form={form}
+              preserve={false}
+              size="large"
+              layout="inline"
+              onFinish={handleClickEditTodo}
+              onFinishFailed={onFinishFailed}
+              initialValues={{
+                todoName: todo.title,
+              }}
+              autoComplete="off">
+              <Form.Item
+                name="todoName"
+                rules={[
+                  {
+                    required: true,
+                    whitespace: true,
+                    message: 'Поле не должно быть пустым или состоять из пробелов',
+                  },
+                  {
+                    validator: (_, value) => {
+                      const trimmedValue = value?.trim() || '';
+                      if (trimmedValue.length > 0 && trimmedValue.length < 2) {
+                        return Promise.reject(new Error('Минимум 2 символа (не считая пробелы)'));
+                      }
+                      if (trimmedValue.length > 64) {
+                        return Promise.reject(new Error('Максимум 64 символа'));
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}>
+                <Input placeholder="Название задачи" />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  color="cyan"
+                  variant="solid"
+                  type="primary"
+                  icon={<CheckOutlined />}
+                  size="large"
+                  htmlType="submit"
+                />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  type="dashed"
+                  icon={<CloseOutlined />}
+                  size="large"
+                  onClick={handleClickCloseEditing}
+                />
+              </Form.Item>
+            </Form>
+          </>
+        ) : (
+          <>
+            <Checkbox checked={todo.isDone} onChange={handleChangeIsDone}>
+              <Typography.Text
+                style={{
+                  color: todo.isDone ? 'gray' : 'inherit',
+                  textDecoration: todo.isDone ? 'line-through' : 'none',
+                  maxWidth: 'calc(400px - 168px)',
+                }}
+                ellipsis={{ tooltip: todo.title }}>
+                {todo.title}
+              </Typography.Text>
+            </Checkbox>
+            <Space>
+              <Button
+                color="primary"
+                variant="solid"
+                icon={<FormOutlined />}
+                size="large"
+                onClick={handleClickStartEdit}
+              />
+              <Popconfirm
+                title="Вы действительно хотите удалить задачу?"
+                onConfirm={handleClickDeleteTask}
+                okText="Да"
+                cancelText="Нет">
+                <Button color="danger" variant="solid" icon={<DeleteOutlined />} size="large" />
+              </Popconfirm>
+            </Space>
+          </>
+        )}
+      </Flex>
+    </Card>
   );
 }
