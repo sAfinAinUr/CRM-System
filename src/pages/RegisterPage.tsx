@@ -30,13 +30,18 @@ const RegisterPage = () => {
       </div>
     );
   }
-
-  const inputStyle = { width: 420, height: 45 };
   const purpleColor = '#7F265B';
+  const inputStyle = { width: '100%', maxWidth: '420px', height: 45 };
+  const buttonStyle = {
+    backgroundColor: `${purpleColor}`,
+    width: '100%',
+    maxWidth: '420px',
+    height: 45,
+  };
 
   return (
     <LayoutAuth>
-      <div style={{ width: 420, margin: '0 auto' }}>
+      <div style={{ width: '100%', maxWidth: '420px', margin: '0 auto' }}>
         <Title level={2}>Регистрация</Title>
         <Form form={form} layout="vertical" onFinish={onFinish} autoComplete="off">
           <Form.Item
@@ -115,7 +120,7 @@ const RegisterPage = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={isLoading} style={inputStyle}>
+            <Button type="primary" htmlType="submit" loading={isLoading} style={buttonStyle}>
               Зарегистрироваться
             </Button>
           </Form.Item>

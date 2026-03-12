@@ -13,8 +13,14 @@ const LoginForm = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  const inputStyle = { width: 420, height: 45 };
   const purpleColor = '#7F265B';
+  const inputStyle = { width: '100%', maxWidth: '420px', height: 45 };
+  const buttonStyle = {
+    backgroundColor: `${purpleColor}`,
+    width: '100%',
+    maxWidth: '420px',
+    height: 45,
+  };
 
   const onFinish = async (values: AuthData) => {
     await loginUser(values);
@@ -34,7 +40,7 @@ const LoginForm = () => {
 
   return (
     <LayoutAuth>
-      <div style={{ width: 420, margin: '0 auto' }}>
+      <div style={{ width: '100%', maxWidth: '420px', margin: '0 auto' }}>
         <Title level={2}>Вход</Title>
         <Form form={form} layout="vertical" onFinish={onFinish} autoComplete="off">
           <Form.Item
@@ -50,7 +56,7 @@ const LoginForm = () => {
             <Input.Password placeholder="Введите пароль" style={inputStyle} />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={isLoading} style={inputStyle} block>
+            <Button type="primary" htmlType="submit" loading={isLoading} style={buttonStyle} block>
               Войти
             </Button>
           </Form.Item>

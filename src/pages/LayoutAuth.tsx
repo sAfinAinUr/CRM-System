@@ -18,7 +18,6 @@ const LayoutAuth: React.FC<LayoutPageProps> = ({ children }) => {
         background: colorBgContainer,
         borderRadius: borderRadiusLG,
         width: '100%',
-        height: '100dvh',
       }}>
       <Sider
         width={911}
@@ -31,6 +30,7 @@ const LayoutAuth: React.FC<LayoutPageProps> = ({ children }) => {
       <Content
         style={{
           display: 'flex',
+          justifyContent: 'center',
           alignItems: 'center',
           flexDirection: 'column',
           padding: '0 24px',
