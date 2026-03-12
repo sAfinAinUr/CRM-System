@@ -1,12 +1,13 @@
 import { Layout, theme } from 'antd';
-import PageMenu from '../components/PageMenu';
 import { ReactNode } from 'react';
+
+import bgImg from '../assets/bgImgAuth.png';
 
 const { Content, Sider } = Layout;
 type LayoutPageProps = {
   children: ReactNode;
 };
-const LayoutPage: React.FC<LayoutPageProps> = ({ children }) => {
+const LayoutAuth: React.FC<LayoutPageProps> = ({ children }) => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -14,14 +15,18 @@ const LayoutPage: React.FC<LayoutPageProps> = ({ children }) => {
   return (
     <Layout
       style={{
-        padding: '24px 0',
         background: colorBgContainer,
         borderRadius: borderRadiusLG,
         width: '100%',
-        height: 'calc(100dvh - 24px*2)',
+        height: '100dvh',
       }}>
-      <Sider style={{ background: colorBgContainer }}>
-        <PageMenu />
+      <Sider
+        width={911}
+        breakpoint="xxl"
+        collapsedWidth="0"
+        trigger={null}
+        style={{ background: colorBgContainer }}>
+        <img src={bgImg} style={{ height: '100%', objectFit: 'cover' }} alt="bg" />
       </Sider>
       <Content
         style={{
@@ -30,7 +35,7 @@ const LayoutPage: React.FC<LayoutPageProps> = ({ children }) => {
           flexDirection: 'column',
           padding: '0 24px',
           minHeight: 280,
-          overflowY: 'scroll',
+          overflowY: 'auto',
         }}>
         {children}
       </Content>
@@ -38,4 +43,4 @@ const LayoutPage: React.FC<LayoutPageProps> = ({ children }) => {
   );
 };
 
-export default LayoutPage;
+export default LayoutAuth;

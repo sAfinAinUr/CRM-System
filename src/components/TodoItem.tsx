@@ -101,19 +101,16 @@ export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: 
                   {
                     required: true,
                     whitespace: true,
-                    message: 'Поле не должно быть пустым или состоять из пробелов',
+                    message: 'Поле не должно быть пустым',
                   },
                   {
-                    validator: (_, value) => {
-                      const trimmedValue = value?.trim() || '';
-                      if (trimmedValue.length > 0 && trimmedValue.length < 2) {
-                        return Promise.reject(new Error('Минимум 2 символа (не считая пробелы)'));
-                      }
-                      if (trimmedValue.length > 64) {
-                        return Promise.reject(new Error('Максимум 64 символа'));
-                      }
-                      return Promise.resolve();
-                    },
+                    min: 2,
+                    transform: (value) => value?.trim(),
+                    message: 'Минимум 2 символа (не считая пробелы)',
+                  },
+                  {
+                    max: 64,
+                    message: 'Максимум 64 символа',
                   },
                 ]}>
                 <Input placeholder="Название задачи" />

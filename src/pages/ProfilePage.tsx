@@ -1,5 +1,24 @@
-import LayoutPage from './LayoutPage';
+import { Button, Card } from 'antd';
+import { logoutUserThunk, useAppDispatch, useAppSelector, userSelect } from '../store';
+import LayoutMainApp from './LayoutMainApp';
+import { useNavigate } from 'react-router';
 
 export default function ProfilePage() {
-  return <LayoutPage>Hello</LayoutPage>;
+  const user = useAppSelector(userSelect);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  function onLogout() {
+    dispatch(logoutUserThunk());
+    navigate('/login');
+  }
+  if (!user) return null;
+  return (
+    <LayoutMainApp>
+      <Card title={user.username} variant="borderless" style={{ width: 300 }}>
+        <p> {user.email}</p>
+        {user.phoneNumber && <p>{user.phoneNumber}</p>}
+      </Card>
+      <Button onClick={onLogout}>ВЫЙТИ</Button>
+    </LayoutMainApp>
+  );
 }
