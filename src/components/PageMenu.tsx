@@ -1,27 +1,47 @@
+import { useLocation, useNavigate } from 'react-router';
+
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import MenuItem from 'antd/es/menu/MenuItem';
-import { useNavigate, useLocation } from 'react-router';
+
+import { useAppSelector, userRoleSelect } from '../store';
+import { Role } from '../types/types';
 
 type MenuItem = Required<MenuProps>['items'][number];
+
 enum MenuItemKey {
   profile = '/profile',
   list = '/',
+  admin = '/admin',
 }
-const items: MenuItem[] = [
+
+const items = [
   {
     key: 'grp',
     type: 'group',
     children: [
       { key: MenuItemKey.profile, label: 'Профиль' },
       { key: MenuItemKey.list, label: 'Список задач' },
+      { key: MenuItemKey.admin, label: 'Пользователи' },
     ],
   },
-];
+] satisfies MenuItem[];
+
 const defaultPage = [MenuItemKey.list];
+
+function getItemsByRoles(roles: Role[]) {
+  return [...items].map((group) =>
+    roles.includes('ADMIN') || roles.includes('MODERATOR')
+      ? group
+      : { ...group, children: group.children.filter(({ key }) => key !== MenuItemKey.admin) }
+  );
+}
+
 export default function PageMenu() {
+  const roles = useAppSelector(userRoleSelect);
   const navigate = useNavigate();
   const { pathname } = useLocation();
+
   const onClick: MenuProps['onClick'] = ({ key }) => {
     navigate(key);
   };
@@ -33,7 +53,7 @@ export default function PageMenu() {
       onClick={onClick}
       style={{ width: '100%', height: '100%' }}
       mode="inline"
-      items={items}
+      items={getItemsByRoles(roles)}
     />
   );
 }

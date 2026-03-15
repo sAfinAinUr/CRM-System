@@ -55,7 +55,8 @@ export default memo(function AddTodo({ updateList }: AddTodoProps) {
         layout="inline"
         onFinish={handleAddTodo}
         onFinishFailed={onFinishFailed}
-        autoComplete="off">
+        autoComplete="off"
+      >
         <Form.Item
           name="todoName"
           rules={[
@@ -73,7 +74,8 @@ export default memo(function AddTodo({ updateList }: AddTodoProps) {
               max: 64,
               message: 'Максимум 64 символа',
             },
-          ]}>
+          ]}
+        >
           <Input placeholder="Название задачи" />
         </Form.Item>
         <Form.Item>

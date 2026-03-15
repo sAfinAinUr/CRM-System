@@ -94,7 +94,8 @@ export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: 
               initialValues={{
                 todoName: todo.title,
               }}
-              autoComplete="off">
+              autoComplete="off"
+            >
               <Form.Item
                 name="todoName"
                 rules={[
@@ -112,7 +113,8 @@ export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: 
                     max: 64,
                     message: 'Максимум 64 символа',
                   },
-                ]}>
+                ]}
+              >
                 <Input placeholder="Название задачи" />
               </Form.Item>
               <Form.Item>
@@ -144,7 +146,8 @@ export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: 
                   textDecoration: todo.isDone ? 'line-through' : 'none',
                   maxWidth: 'calc(400px - 168px)',
                 }}
-                ellipsis={{ tooltip: todo.title }}>
+                ellipsis={{ tooltip: todo.title }}
+              >
                 {todo.title}
               </Typography.Text>
             </Checkbox>
@@ -160,7 +163,8 @@ export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: 
                 title="Вы действительно хотите удалить задачу?"
                 onConfirm={handleClickDeleteTask}
                 okText="Да"
-                cancelText="Нет">
+                cancelText="Нет"
+              >
                 <Button color="danger" variant="solid" icon={<DeleteOutlined />} size="large" />
               </Popconfirm>
             </Space>

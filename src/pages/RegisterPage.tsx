@@ -1,18 +1,25 @@
 import { useEffect } from 'react';
-import { Form, Input, Button, message, Typography } from 'antd';
 import { Link } from 'react-router';
-import LayoutAuth from './LayoutAuth';
-import { UserRegistration } from '../types/auth';
+
+import { Button, Form, Input, message, Typography } from 'antd';
+
 import { useSignupMutation } from '../store';
+import { UserRegistration } from '../types/auth';
+import LayoutAuth from './LayoutAuth';
 
 const { Title, Text } = Typography;
 
 const RegisterPage = () => {
   const [signup, { isLoading, isSuccess, isError, error }] = useSignupMutation({});
+
   const [form] = Form.useForm();
 
-  const onFinish = async ({ confirm, ...rest }: UserRegistration & { confirm: string }) => {
+  const onFinish = async ({
+    confirm: _confirm,
+    ...rest
+  }: UserRegistration & { confirm: string }) => {
     console.log('Данные формы:', rest);
+
     signup(rest);
   };
 
@@ -26,23 +33,31 @@ const RegisterPage = () => {
     return (
       <div style={{ textAlign: 'center', padding: '50px' }}>
         <Title level={3}>Вы успешно зарегистрированы!</Title>
+
         <Link to="/login">Перейти на страницу авторизации для входа в систему</Link>
       </div>
     );
   }
+
   const purpleColor = '#7F265B';
+
   const inputStyle = { width: '100%', maxWidth: '420px', height: 45 };
+
   const buttonStyle = {
     backgroundColor: `${purpleColor}`,
+
     width: '100%',
+
     maxWidth: '420px',
-    height: 45,
+
+    height: 45
   };
 
   return (
     <LayoutAuth>
       <div style={{ width: '100%', maxWidth: '420px', margin: '0 auto' }}>
         <Title level={2}>Регистрация</Title>
+
         <Form form={form} layout="vertical" onFinish={onFinish} autoComplete="off">
           <Form.Item
             label="Имя пользователя"
@@ -50,15 +65,21 @@ const RegisterPage = () => {
             rules={[
               {
                 min: 1,
+
                 transform: (value) => value?.trim(),
-                message: 'Минимум 1 символ (не считая пробелы)',
+
+                message: 'Минимум 1 символ (не считая пробелы)'
               },
+
               {
                 max: 60,
-                message: 'Максимум 60 символов',
+
+                message: 'Максимум 60 символов'
               },
+
               { whitespace: true, required: true, message: 'Введите имя пользователя' },
-              { pattern: /^[а-яА-Яa-zA-Z\s]+$/, message: 'Только русские или латинские буквы' },
+
+              { pattern: /^[а-яА-Яa-zA-Z\s]+$/, message: 'Только русские или латинские буквы' }
             ]}>
             <Input style={inputStyle} />
           </Form.Item>
@@ -69,15 +90,21 @@ const RegisterPage = () => {
             rules={[
               {
                 min: 2,
+
                 transform: (value) => value?.trim(),
-                message: 'Минимум 2 символа (не считая пробелы)',
+
+                message: 'Минимум 2 символа (не считая пробелы)'
               },
+
               {
                 max: 60,
-                message: 'Максимум 64 символа',
+
+                message: 'Максимум 64 символа'
               },
+
               { required: true, message: 'Введите логин' },
-              { pattern: /^[a-zA-Z]+$/, message: 'Только латинские буквы' },
+
+              { pattern: /^[a-zA-Z]+$/, message: 'Только латинские буквы' }
             ]}>
             <Input style={inputStyle} />
           </Form.Item>
@@ -87,7 +114,8 @@ const RegisterPage = () => {
             name="password"
             rules={[
               { required: true, message: 'Введите пароль' },
-              { min: 6, max: 60, message: 'От 6 до 60 символов' },
+
+              { min: 6, max: 60, message: 'От 6 до 60 символов' }
             ]}>
             <Input.Password placeholder="******" style={inputStyle} />
           </Form.Item>
@@ -98,14 +126,16 @@ const RegisterPage = () => {
             dependencies={['password']}
             rules={[
               { required: true, message: 'Подтвердите пароль' },
+
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || getFieldValue('password') === value) {
                     return Promise.resolve();
                   }
+
                   return Promise.reject(new Error('Пароли не совпадают'));
-                },
-              }),
+                }
+              })
             ]}>
             <Input.Password placeholder="******" style={inputStyle} />
           </Form.Item>
@@ -115,7 +145,8 @@ const RegisterPage = () => {
             name="email"
             rules={[
               { required: true, message: 'Введите email' },
-              { type: 'email', message: 'Введите валидный email' },
+
+              { type: 'email', message: 'Введите валидный email' }
             ]}>
             <Input placeholder="example@mail.com" style={inputStyle} />
           </Form.Item>
@@ -135,6 +166,7 @@ const RegisterPage = () => {
 
           <div style={{ textAlign: 'center' }}>
             <Text type="secondary">Уже есть аккаунт? </Text>
+
             <Link to="/login" style={{ color: purpleColor }}>
               Войти
             </Link>

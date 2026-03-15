@@ -7,6 +7,7 @@ import RegisterPage from './pages/RegisterPage';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import { AuthProvider } from './providers/AuthProvider';
+import AdminPage from './pages/AdminPage';
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,14 @@ const router = createBrowserRouter([
     Component: () => (
       <AuthProvider>
         <ProfilePage />
+      </AuthProvider>
+    ),
+  },
+  {
+    path: '/admin',
+    Component: () => (
+      <AuthProvider>
+        <AdminPage />
       </AuthProvider>
     ),
   },

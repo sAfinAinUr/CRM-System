@@ -1,13 +1,16 @@
-import { Layout, theme } from 'antd';
 import { ReactNode } from 'react';
+
+import { Layout, theme } from 'antd';
 
 import bgImg from '../assets/bgImgAuth.png';
 
 const { Content, Sider } = Layout;
-type LayoutPageProps = {
+
+type Props = {
   children: ReactNode;
 };
-const LayoutAuth: React.FC<LayoutPageProps> = ({ children }) => {
+
+const LayoutAuth: React.FC<Props> = ({ children }) => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();

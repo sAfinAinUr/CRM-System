@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
+
+import { getRefreshTokenFromCookie } from '../api/axios';
 import {
   getUserProfileThunk,
   setAuth,
@@ -7,29 +9,34 @@ import {
   useAppSelector,
   userErrorSelect
 } from '../store';
-import { getRefreshTokenFromCookie } from '../api/axios';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isInit, setIsInit] = useState(false);
   const error = useAppSelector(userErrorSelect);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
   useEffect(() => {
     if (error) navigate('/login');
-  }, [error]);
+  }, [error, navigate]);
+
   useEffect(() => {
+    if (isInit) return;
+
     (async () => {
       const refreshToken = await getRefreshTokenFromCookie();
       if (refreshToken) {
         await dispatch(getUserProfileThunk());
         dispatch(setAuth(true));
-      } else navigate('/login');
+      }
 
       setIsInit(true);
     })();
-  }, [navigate]);
+  }, [navigate, dispatch, isInit]);
+
   if (!isInit) {
     return null;
   }
+
   return children;
 };

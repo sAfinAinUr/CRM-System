@@ -1,12 +1,16 @@
-import { Layout, theme } from 'antd';
-import PageMenu from '../components/PageMenu';
 import { ReactNode } from 'react';
 
+import { Layout, theme } from 'antd';
+
+import PageMenu from '../components/PageMenu';
+
 const { Content, Sider } = Layout;
-type LayoutPageProps = {
+
+type Props = {
   children: ReactNode;
 };
-const LayoutMainApp: React.FC<LayoutPageProps> = ({ children }) => {
+
+const LayoutMainApp: React.FC<Props> = ({ children }) => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();

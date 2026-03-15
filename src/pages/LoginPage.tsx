@@ -46,13 +46,15 @@ const LoginForm = () => {
           <Form.Item
             label="Логин"
             name="login"
-            rules={[{ required: true, message: 'Пожалуйста, введите логин' }]}>
+            rules={[{ required: true, message: 'Пожалуйста, введите логин' }]}
+          >
             <Input placeholder="Введите логин" style={inputStyle} />
           </Form.Item>
           <Form.Item
             label="Пароль"
             name="password"
-            rules={[{ required: true, message: 'Пожалуйста, введите пароль' }]}>
+            rules={[{ required: true, message: 'Пожалуйста, введите пароль' }]}
+          >
             <Input.Password placeholder="Введите пароль" style={inputStyle} />
           </Form.Item>
           <Form.Item>

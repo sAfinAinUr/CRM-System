@@ -1,7 +1,8 @@
-import { createSlice, PayloadAction, createSelector } from '@reduxjs/toolkit/react';
-import type { Profile } from '../../types/auth';
-import { getUserProfileThunk, logoutUserThunk } from '../thunks/userAsyncThunks';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit/react';
+
+import type { Profile, Role } from '../../types/auth';
 import { RootState } from '../store';
+import { getUserProfileThunk, logoutUserThunk } from '../thunks/userAsyncThunks';
 
 interface UserState {
   isAuth: boolean;
@@ -45,4 +46,7 @@ export const userErrorSelect = createSelector(
   [(state: RootState) => state],
   (state: RootState) => state.userSlice.error
 );
+
+export const userRoleSelect = createSelector([userSelect], (user) => user?.roles || ([] as Role[]));
+
 export const { setAuth } = userSlice.actions;

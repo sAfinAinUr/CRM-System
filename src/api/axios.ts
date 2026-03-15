@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { updateToken } from './auth';
+
 import { Token } from '../types/auth';
+import { updateToken } from './auth';
 import { tokenService } from './tokenService';
 
 const securedRoutes = [
@@ -8,6 +9,7 @@ const securedRoutes = [
   '/user/profile/reset-password',
   '/user/logout',
   '/auth/refresh',
+  '/admin/users',
 ];
 
 let isRefreshing = false;
@@ -23,6 +25,7 @@ export const api = axios.create({
 api.interceptors.request.use(async (request) => {
   const accessToken = tokenService.getToken();
   accessToken && (request.headers.Authorization = `Bearer ${accessToken}`);
+
   return request;
 });
 
@@ -33,11 +36,13 @@ api.interceptors.response.use(
   async (error) => {
     const isAxiosError = axios.isAxiosError(error);
     const isUnauthorizedError = error.response?.status === 401;
+
     const isSecuredRoute =
       isAxiosError &&
       securedRoutes.some((url) => {
         return error.config?.url?.includes(url);
       });
+
     const errorConfig = error?.config;
     if (!isAxiosError || !errorConfig || !isUnauthorizedError || !isSecuredRoute) {
       return Promise.reject(error);
@@ -61,6 +66,7 @@ api.interceptors.response.use(
     const refreshToken = await getRefreshTokenFromCookie();
     if (!refreshToken) {
       tokenService.clearToken();
+
       return Promise.reject(error);
     }
     try {
@@ -70,6 +76,7 @@ api.interceptors.response.use(
       queueFailedResponses.forEach(({ resolve }) => resolve(null));
       queueFailedResponses = [];
       isRefreshing = false;
+
       return api.request(errorConfig);
     } catch {
       queueFailedResponses.forEach(({ reject }) => reject());
@@ -82,6 +89,7 @@ api.interceptors.response.use(
 
 export async function setToken(token: Token) {
   tokenService.setToken(token.accessToken);
+
   await cookieStore.set({
     name: 'refreshToken',
     value: token.refreshToken,
@@ -90,5 +98,6 @@ export async function setToken(token: Token) {
 
 export async function getRefreshTokenFromCookie(): Promise<string | undefined> {
   const refreshTokenCookie = await cookieStore.get('refreshToken');
+
   return refreshTokenCookie?.value;
 }
