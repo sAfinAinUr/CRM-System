@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Form, Input, Button, message, Typography } from 'antd';
 import { Link } from 'react-router';
 import LayoutAuth from './LayoutAuth';
-import { UserRegistration } from '../types/types';
+import { UserRegistration } from '../types/auth';
 import { useSignupMutation } from '../store';
 
 const { Title, Text } = Typography;
@@ -48,11 +48,19 @@ const RegisterPage = () => {
             label="Имя пользователя"
             name="username"
             rules={[
-              { required: true, message: 'Введите имя пользователя' },
+              {
+                min: 1,
+                transform: (value) => value?.trim(),
+                message: 'Минимум 1 символ (не считая пробелы)',
+              },
+              {
+                max: 60,
+                message: 'Максимум 60 символов',
+              },
+              { whitespace: true, required: true, message: 'Введите имя пользователя' },
               { pattern: /^[а-яА-Яa-zA-Z\s]+$/, message: 'Только русские или латинские буквы' },
-              { min: 1, max: 60, message: 'От 1 до 60 символов' },
             ]}>
-            <Input placeholder="Иван" style={inputStyle} />
+            <Input style={inputStyle} />
           </Form.Item>
 
           <Form.Item
@@ -71,7 +79,7 @@ const RegisterPage = () => {
               { required: true, message: 'Введите логин' },
               { pattern: /^[a-zA-Z]+$/, message: 'Только латинские буквы' },
             ]}>
-            <Input placeholder="ivan_cool" style={inputStyle} />
+            <Input style={inputStyle} />
           </Form.Item>
 
           <Form.Item

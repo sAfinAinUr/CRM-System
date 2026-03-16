@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { deleteTodo, editTodo } from '../api/http';
-import { Todo } from '../types/types.ts';
+import { deleteTodo, editTodo } from '../api/todo';
+import { Todo } from '../types/todo';
 import {
   Button,
   Form,

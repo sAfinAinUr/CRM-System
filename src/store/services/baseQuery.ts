@@ -1,4 +1,4 @@
-import { api } from '../../api/http';
+import { api } from '../../api/axios';
 import { AxiosError, AxiosRequestConfig } from 'axios';
 import { BaseQueryFn } from '@reduxjs/toolkit/query/react';
 

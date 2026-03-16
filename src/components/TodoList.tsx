@@ -1,6 +1,6 @@
 import { Flex } from 'antd';
 import TodoItem from './TodoItem.jsx';
-import { Todo } from '../types/types.ts';
+import { Todo } from '../types/todo';
 
 type TodoListProps = {
   list: Todo[];

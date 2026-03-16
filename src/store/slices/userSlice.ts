@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createSelector } from '@reduxjs/toolkit/react';
-import type { Profile } from '../../types/types';
+import type { Profile } from '../../types/auth';
 import { getUserProfileThunk, logoutUserThunk } from '../thunks/userAsyncThunks';
 import { RootState } from '../store';
 

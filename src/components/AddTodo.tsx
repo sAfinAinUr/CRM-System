@@ -1,5 +1,5 @@
 import { memo, useState } from 'react';
-import { addTodo } from '../api/http';
+import { addTodo } from '../api/todo';
 import { Button, Form, Input, notification } from 'antd';
 import { getErrorMessage } from '../helpers/getErrorMessage';
 type AddTodoProps = {

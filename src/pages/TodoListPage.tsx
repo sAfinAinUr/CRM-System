@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { getTodoList } from '../api/http';
+import { getTodoList } from '../api/todo';
 import TodoList from '../components/TodoList';
 import TodoListFilterStatusMenu from '../components/TodoListFilterStatusMenu';
 import AddTodo from '../components/AddTodo';
-import { MetaResponse, Todo, TodoInfo, FilterStatus } from '../types/types.ts';
+import { MetaResponse, Todo, TodoInfo, FilterStatus } from '../types/todo';
 
 import { Flex, message, Spin } from 'antd';
 import { getErrorMessage } from '../helpers/getErrorMessage.ts';

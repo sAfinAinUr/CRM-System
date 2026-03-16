@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import type { UserRegistration } from '../../types/types';
+import type { UserRegistration } from '../../types/auth';
 import { axiosBaseQuery, isBaseQueryError } from './baseQuery';
 
 const errorStatus = {
