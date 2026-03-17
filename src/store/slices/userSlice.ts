@@ -6,6 +6,7 @@ import { RootState } from '../store';
 interface UserState {
   isAuth: boolean;
   user?: Profile;
+  error?: unknown;
 }
 
 const userInitialState: UserState = { isAuth: false, user: undefined };
@@ -16,7 +17,7 @@ export const userSlice = createSlice({
   reducers: {
     setAuth: (state, action: PayloadAction<boolean>) => {
       state.isAuth = action.payload;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -26,12 +27,22 @@ export const userSlice = createSlice({
       .addCase(logoutUserThunk.fulfilled, (state) => {
         state.isAuth = false;
         state.user = undefined;
+      })
+      .addCase(getUserProfileThunk.rejected, (state, action) => {
+        state.error = action.error;
+      })
+      .addCase(logoutUserThunk.rejected, (state, action) => {
+        state.error = action.error;
       });
-  },
+  }
 });
 
 export const userSelect = createSelector(
   [(state: RootState) => state],
   (state: RootState) => state.userSlice.user
+);
+export const userErrorSelect = createSelector(
+  [(state: RootState) => state],
+  (state: RootState) => state.userSlice.error
 );
 export const { setAuth } = userSlice.actions;
