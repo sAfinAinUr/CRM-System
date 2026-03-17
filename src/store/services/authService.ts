@@ -27,8 +27,7 @@ export const authService = createApi({
         setToken(data);
         return data;
       },
-      transformErrorResponse(baseQueryReturnValue, meta, arg) {
-        console.log({ baseQueryReturnValue, meta, arg });
+      transformErrorResponse(baseQueryReturnValue) {
         if (
           isBaseQueryError(baseQueryReturnValue) &&
           baseQueryReturnValue.status &&

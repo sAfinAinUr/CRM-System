@@ -8,6 +8,7 @@ import {
   UserRegistration,
 } from '../types/auth';
 import { api } from './axios';
+import { tokenService } from './tokenService';
 
 export async function registerUser(registerPayload: UserRegistration): Promise<void> {
   await api.post('/auth/signup', registerPayload);
@@ -39,4 +40,6 @@ export async function changePassword(passwordPayload: PasswordRequest): Promise<
 
 export async function logout(): Promise<void> {
   await api.post('/user/logout');
+  await cookieStore.delete('refreshToken');
+  tokenService.clearToken();
 }

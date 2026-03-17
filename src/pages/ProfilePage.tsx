@@ -1,16 +1,17 @@
-import { Button, Card } from 'antd';
+import { Button, Card, message } from 'antd';
 import { logoutUserThunk, useAppDispatch, useAppSelector, userSelect } from '../store';
 import LayoutMainApp from './LayoutMainApp';
 import { useNavigate } from 'react-router';
+import { getErrorMessage } from '../helpers/getErrorMessage';
 
 export default function ProfilePage() {
   const user = useAppSelector(userSelect);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  function onLogout() {
-    dispatch(logoutUserThunk());
+  const onLogout = async () => {
+    await dispatch(logoutUserThunk()).unwrap();
     navigate('/login');
-  }
+  };
   if (!user) return null;
   return (
     <LayoutMainApp>
