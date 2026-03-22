@@ -1,7 +1,9 @@
+import { useNavigate } from 'react-router';
+
 import { Button, Card } from 'antd';
+
 import { logoutUserThunk, useAppDispatch, useAppSelector, userSelect } from '../store';
 import LayoutMainApp from './LayoutMainApp';
-import { useNavigate } from 'react-router';
 
 export default function ProfilePage() {
   const user = useAppSelector(userSelect);
@@ -14,6 +16,7 @@ export default function ProfilePage() {
   };
 
   if (!user) return null;
+
   return (
     <LayoutMainApp>
       <Card title={user.username} variant="borderless" style={{ width: 300 }}>

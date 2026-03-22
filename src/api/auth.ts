@@ -16,21 +16,25 @@ export async function registerUser(registerPayload: UserRegistration): Promise<v
 
 export async function loginUser(loginPayload: AuthData): Promise<Token> {
   const response = await api.post('/auth/signin', loginPayload);
+
   return response.data;
 }
 
 export async function updateToken(refreshToken: RefreshToken): Promise<Token> {
   const response = await api.post('/auth/refresh', refreshToken);
+
   return response.data;
 }
 
 export async function getUserProfile(): Promise<Profile> {
   const response = await api.get('/user/profile');
+
   return response.data;
 }
 
 export async function updateProfile(profilePayload: ProfileRequest): Promise<Profile> {
   const response = await api.put('/user/profile', profilePayload);
+
   return response.data;
 }
 

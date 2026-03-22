@@ -9,7 +9,7 @@ const securedRoutes = [
   '/user/profile/reset-password',
   '/user/logout',
   '/auth/refresh',
-  '/admin/users',
+  '/admin/users'
 ];
 
 let isRefreshing = false;
@@ -18,8 +18,8 @@ let queueFailedResponses: { resolve: (value: unknown) => void; reject: () => voi
 export const api = axios.create({
   baseURL: import.meta.env.VITE_APP_API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
-  },
+    'Content-Type': 'application/json'
+  }
 });
 
 api.interceptors.request.use(async (request) => {
@@ -44,6 +44,16 @@ api.interceptors.response.use(
       });
 
     const errorConfig = error?.config;
+
+    // баг системы, error.response пуст, хотя должен быть 429
+    if (isAxiosError && !error.response && errorConfig) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(api.request(errorConfig));
+        }, 1000);
+      });
+    }
+
     if (!isAxiosError || !errorConfig || !isUnauthorizedError || !isSecuredRoute) {
       return Promise.reject(error);
     }
@@ -92,7 +102,7 @@ export async function setToken(token: Token) {
 
   await cookieStore.set({
     name: 'refreshToken',
-    value: token.refreshToken,
+    value: token.refreshToken
   });
 }
 

@@ -1,19 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { Input, Table, TableColumnsType, TableProps } from 'antd';
+import { Input, Table, TableColumnsType } from 'antd';
 
+import AdminListActions from '../components/AdminListActions.tsx';
 import { useGetAdminListQuery } from '../store/index.ts';
-import { User } from '../types/admin.ts';
+import { User, UsersOrderType } from '../types/admin.ts';
 import LayoutMainApp from './LayoutMainApp.tsx';
 
-const columns: TableColumnsType<User> = [
+const getColumns = (refetch: VoidFunction): TableColumnsType<User> => [
   {
     title: 'Имя',
     dataIndex: 'username',
+    sorter: true
   },
   {
     title: 'Почта',
     dataIndex: 'email',
+    sorter: true
   },
   {
     title: 'Дата регистрации',
@@ -22,42 +25,55 @@ const columns: TableColumnsType<User> = [
       const date = new Date(value);
 
       return date.toLocaleDateString();
-    },
+    }
   },
   {
     title: 'Статус блокировки',
     dataIndex: 'isBlocked',
+    filterMode: 'menu',
+    filterMultiple: false,
+    filters: [
+      { text: 'заблокирован', value: true },
+      { text: 'активен', value: false }
+    ],
     render(value) {
-      return value ? 'blocked' : '-';
-    },
+      return value ? 'заблокирован' : 'активен';
+    }
   },
   {
     title: 'Роли',
     dataIndex: 'roles',
     render(value) {
       return JSON.stringify(value, null, 2);
-    },
+    }
   },
   {
     title: 'Номер телефона',
-    dataIndex: 'phoneNumber',
+    dataIndex: 'phoneNumber'
   },
+  {
+    title: 'Action',
+    key: 'action',
+    render: (_, item) => <AdminListActions refetch={refetch} user={item} />
+  }
 ];
-
-const onChange: TableProps<User>['onChange'] = (pagination, filters, sorter, extra) => {
-  console.log('params', pagination, filters, sorter, extra);
-};
 
 export default function AdminPage() {
   const [searchText, setSearchText] = useState('');
   const [searchTextDb, setSearchTextDb] = useState('');
+  const [sortBy, setSortBy] = useState('');
+  const [sortOrder, setSortOrder] = useState<UsersOrderType>(undefined);
+  const [isBlocked, setIsBlocked] = useState<boolean | undefined>(undefined);
   const [pagination, setPagination] = useState({ page: 1, pageSize: 20 });
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
 
-  const { data, isSuccess } = useGetAdminListQuery({
+  const { data, isSuccess, refetch } = useGetAdminListQuery({
     page: pagination.page - 1,
     limit: pagination.pageSize,
     search: searchTextDb,
+    sortBy,
+    sortOrder,
+    isBlocked
   });
 
   useEffect(() => {
@@ -72,15 +88,24 @@ export default function AdminPage() {
 
   if (!isSuccess) return null;
 
-  console.log(data.data);
-
   return (
     <LayoutMainApp>
       <Input.Search value={searchText} onChange={(e) => setSearchText(e.target.value)} />
       <Table<User>
-        columns={columns}
+        columns={getColumns(refetch)}
         dataSource={data.data}
-        onChange={onChange}
+        onChange={(_pagination, filters, sorter) => {
+          if (Array.isArray(sorter)) return;
+          if (typeof sorter.field === 'string') {
+            setSortBy(sorter.field);
+            setSortOrder(sorter.order === 'ascend' ? 'asc' : 'desc');
+          } else {
+            setSortBy('');
+            setSortOrder(undefined);
+          }
+          if (typeof filters.isBlocked?.[0] === 'boolean') setIsBlocked(filters.isBlocked[0]);
+          else setIsBlocked(undefined);
+        }}
         pagination={{
           total: data.meta.totalAmount,
           defaultCurrent: 1,
@@ -90,7 +115,7 @@ export default function AdminPage() {
           onChange: (page, pageSize) => {
             setPagination({ page, pageSize });
             console.log(page, pageSize);
-          },
+          }
         }}
       />
     </LayoutMainApp>

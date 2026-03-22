@@ -1,5 +1,12 @@
 export { useAppDispatch, useAppSelector } from './hooks';
-export { useGetAdminListQuery } from './services/adminService';
+export {
+  useBlockUserMutation,
+  useGetAdminListQuery,
+  useGetUserProfileQuery,
+  useUnblockUserMutation,
+  useUpdateRolesMutation,
+  useUpdateUserMutation
+} from './services/adminService';
 export { useLoginMutation } from './services/authService';
 export { useSignupMutation } from './services/registerService';
 export { setAuth, userErrorSelect, userRoleSelect, userSelect } from './slices/userSlice';

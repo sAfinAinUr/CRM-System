@@ -28,10 +28,12 @@ export interface MetaResponse<T> {
 }
 
 export interface UserRolesRequest {
+  id: number;
   roles: Roles[];
 }
 
 export interface UserRequest {
+  id: number;
   username?: string;
   email?: string;
   phoneNumber?: string;
@@ -40,7 +42,9 @@ export interface UserRequest {
 export enum Roles {
   ADMIN = 'ADMIN',
   MODERATOR = 'MODERATOR',
-  USER = 'USER',
+  USER = 'USER'
 }
 
 export type UsersListResponse = MetaResponse<User>;
+
+export type UsersOrderType = Pick<UserFilters, 'sortOrder'>['sortOrder'];
