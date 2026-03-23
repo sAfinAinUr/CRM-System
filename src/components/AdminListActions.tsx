@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import { EllipsisOutlined } from '@ant-design/icons';
 import {
   DeleteOutlined,
+  EllipsisOutlined,
   LockOutlined,
   UnlockOutlined,
   UserAddOutlined,

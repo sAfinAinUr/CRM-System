@@ -18,7 +18,7 @@ import { deleteTodo, editTodo } from '../api/todo';
 import { getErrorMessage } from '../helpers/getErrorMessage.ts';
 import { Todo } from '../types/todo';
 
-type TodoItemProps = {
+type Props = {
   todo: Todo;
   updateList: () => Promise<void>;
   onStartEdit: () => void;
@@ -29,7 +29,7 @@ interface EditTodoFieldType {
   todoName?: string;
 }
 
-export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: TodoItemProps) {
+export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: Props) {
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
   function handleClickStartEdit() {

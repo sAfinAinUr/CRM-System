@@ -5,14 +5,14 @@ import { Menu } from 'antd';
 import MenuItem from 'antd/es/menu/MenuItem';
 
 import { useAppSelector, userRoleSelect } from '../store';
-import { Role } from '../types/types';
+import { Role } from '../types/auth';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
 enum MenuItemKey {
   profile = '/profile',
   list = '/',
-  admin = '/admin',
+  admin = '/admin'
 }
 
 const items = [
@@ -22,9 +22,9 @@ const items = [
     children: [
       { key: MenuItemKey.profile, label: 'Профиль' },
       { key: MenuItemKey.list, label: 'Список задач' },
-      { key: MenuItemKey.admin, label: 'Пользователи' },
-    ],
-  },
+      { key: MenuItemKey.admin, label: 'Пользователи' }
+    ]
+  }
 ] satisfies MenuItem[];
 
 const defaultPage = [MenuItemKey.list];
@@ -43,7 +43,7 @@ export default function PageMenu() {
   const { pathname } = useLocation();
 
   const onClick: MenuProps['onClick'] = ({ key }) => {
-    navigate(key);
+    navigate(key, { viewTransition: true });
   };
 
   return (

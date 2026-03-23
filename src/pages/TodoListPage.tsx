@@ -1,19 +1,21 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { getTodoList } from '../api/todo';
-import TodoList from '../components/TodoList';
-import TodoListFilterStatusMenu from '../components/TodoListFilterStatusMenu';
-import AddTodo from '../components/AddTodo';
-import { MetaResponse, Todo, TodoInfo, FilterStatus } from '../types/todo';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Flex, message, Spin } from 'antd';
+
+import { getTodoList } from '../api/todo';
+import AddTodo from '../components/AddTodo';
+import TodoList from '../components/TodoList';
+import TodoListFilterStatusMenu from '../components/TodoListFilterStatusMenu';
 import { getErrorMessage } from '../helpers/getErrorMessage.ts';
+import { FilterStatus, MetaResponse, Todo, TodoInfo } from '../types/todo';
 import LayoutMainApp from './LayoutMainApp.tsx';
 
 const DEFAULT_LIST_INFO = {
   all: 0,
   completed: 0,
-  inWork: 0,
+  inWork: 0
 };
+
 const refetchTodoListInterval = 5000;
 
 export default function TodoListPage() {
@@ -37,15 +39,19 @@ export default function TodoListPage() {
       setIsFetching(false);
     }
   }, [filterStatusOfTaskList]);
+
   const handleStartEdit = () => setIsEditingAnyTask(true);
   const handleStopEdit = () => setIsEditingAnyTask(false);
+
   useEffect(() => {
     fetchTodoData();
   }, [filterStatusOfTaskList]);
+
   useEffect(() => {
     if (!isEditingAnyTask) {
       refetchTodoListIntervalRef.current = setInterval(fetchTodoData, refetchTodoListInterval);
     }
+
     return () => {
       if (refetchTodoListIntervalRef.current) {
         clearInterval(refetchTodoListIntervalRef.current);

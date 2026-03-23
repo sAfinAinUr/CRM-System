@@ -12,7 +12,7 @@ type Props = {
 
 const LayoutMainApp: React.FC<Props> = ({ children }) => {
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { colorBgContainer, borderRadiusLG }
   } = theme.useToken();
 
   return (
@@ -22,7 +22,7 @@ const LayoutMainApp: React.FC<Props> = ({ children }) => {
         background: colorBgContainer,
         borderRadius: borderRadiusLG,
         width: '100%',
-        height: 'calc(100dvh - 24px*2)',
+        height: 'calc(100dvh - 24px*2)'
       }}>
       <Sider style={{ background: colorBgContainer }}>
         <PageMenu />
@@ -34,7 +34,7 @@ const LayoutMainApp: React.FC<Props> = ({ children }) => {
           flexDirection: 'column',
           padding: '0 24px',
           minHeight: 280,
-          overflowY: 'scroll',
+          overflowY: 'scroll'
         }}>
         {children}
       </Content>
