@@ -1,10 +1,9 @@
 import { Button, Form, Input, message, Typography } from 'antd';
-import LayoutAuth from './LayoutAuth';
 import { Link, useNavigate } from 'react-router';
 import { useEffect } from 'react';
 
 import { useLoginMutation } from '../store';
-import { AuthData } from '../types/types';
+import { AuthData } from '../types/auth';
 
 const { Title, Text } = Typography;
 
@@ -39,36 +38,34 @@ const LoginForm = () => {
   }, [isSuccess, data, navigate]);
 
   return (
-    <LayoutAuth>
-      <div style={{ width: '100%', maxWidth: '420px', margin: '0 auto' }}>
-        <Title level={2}>Вход</Title>
-        <Form form={form} layout="vertical" onFinish={onFinish} autoComplete="off">
-          <Form.Item
-            label="Логин"
-            name="login"
-            rules={[{ required: true, message: 'Пожалуйста, введите логин' }]}>
-            <Input placeholder="Введите логин" style={inputStyle} />
-          </Form.Item>
-          <Form.Item
-            label="Пароль"
-            name="password"
-            rules={[{ required: true, message: 'Пожалуйста, введите пароль' }]}>
-            <Input.Password placeholder="Введите пароль" style={inputStyle} />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" loading={isLoading} style={buttonStyle} block>
-              Войти
-            </Button>
-          </Form.Item>
-          <div style={{ textAlign: 'center' }}>
-            <Text type="secondary">Нет аккаунта? </Text>
-            <Link to="/register" style={{ color: purpleColor }}>
-              Зарегистрироваться
-            </Link>
-          </div>
-        </Form>
-      </div>
-    </LayoutAuth>
+    <div style={{ width: '100%', maxWidth: '420px', margin: '0 auto' }}>
+      <Title level={2}>Вход</Title>
+      <Form form={form} layout="vertical" onFinish={onFinish} autoComplete="off">
+        <Form.Item
+          label="Логин"
+          name="login"
+          rules={[{ required: true, message: 'Пожалуйста, введите логин' }]}>
+          <Input placeholder="Введите логин" style={inputStyle} />
+        </Form.Item>
+        <Form.Item
+          label="Пароль"
+          name="password"
+          rules={[{ required: true, message: 'Пожалуйста, введите пароль' }]}>
+          <Input.Password placeholder="Введите пароль" style={inputStyle} />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={isLoading} style={buttonStyle} block>
+            Войти
+          </Button>
+        </Form.Item>
+        <div style={{ textAlign: 'center' }}>
+          <Text type="secondary">Нет аккаунта? </Text>
+          <Link to="/register" style={{ color: purpleColor }}>
+            Зарегистрироваться
+          </Link>
+        </div>
+      </Form>
+    </div>
   );
 };
 

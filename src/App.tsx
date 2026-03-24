@@ -6,32 +6,35 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import { Provider } from 'react-redux';
 import { store } from './store';
-import { AuthProvider } from './providers/AuthProvider';
+import LayoutMainApp from './pages/LayoutMainApp';
+import LayoutAuth from './pages/LayoutAuth';
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    Component: () => (
-      <AuthProvider>
-        <TodoListPage />
-      </AuthProvider>
-    ),
+    element: <LayoutMainApp />,
+    children: [
+      {
+        path: '/',
+        element: <TodoListPage />,
+      },
+      {
+        path: '/profile',
+        element: <ProfilePage />,
+      },
+    ],
   },
   {
-    path: '/profile',
-    Component: () => (
-      <AuthProvider>
-        <ProfilePage />
-      </AuthProvider>
-    ),
-  },
-  {
-    path: '/login',
-    Component: LoginPage,
-  },
-  {
-    path: '/register',
-    Component: RegisterPage,
+    element: <LayoutAuth />,
+    children: [
+      {
+        path: '/login',
+        Component: LoginPage,
+      },
+      {
+        path: '/register',
+        Component: RegisterPage,
+      },
+    ],
   },
 ]);
 

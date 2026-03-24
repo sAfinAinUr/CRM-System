@@ -1,11 +1,15 @@
-let _accessToken: string | null = null;
+class TokenService {
+  private accessToken: string | null = null;
 
-export const tokenService = {
-  setToken: (token: string) => {
-    _accessToken = token;
-  },
-  getToken: () => _accessToken,
-  clearToken: () => {
-    _accessToken = null;
-  },
-};
+  setToken(token: string): void {
+    this.accessToken = token;
+  }
+  getToken(): string | null {
+    return this.accessToken;
+  }
+  clearToken(): void {
+    this.accessToken = null;
+  }
+}
+
+export const tokenService = new TokenService();

@@ -1,35 +1,51 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { Navigate } from 'react-router';
 import {
   getUserProfileThunk,
   setAuth,
   useAppDispatch,
   useAppSelector,
-  userErrorSelect
+  userErrorSelect,
 } from '../store';
 import { getRefreshTokenFromCookie } from '../api/axios';
+import { Spin } from 'antd';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isInit, setIsInit] = useState(false);
+  const [shouldRedirect, setShouldRedirect] = useState(false);
+
   const error = useAppSelector(userErrorSelect);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (error) navigate('/login');
-  }, [error]);
+
   useEffect(() => {
     (async () => {
-      const refreshToken = await getRefreshTokenFromCookie();
-      if (refreshToken) {
-        await dispatch(getUserProfileThunk());
-        dispatch(setAuth(true));
-      } else navigate('/login');
-
-      setIsInit(true);
+      try {
+        const refreshToken = await getRefreshTokenFromCookie();
+        if (refreshToken) {
+          await dispatch(getUserProfileThunk()).unwrap();
+          dispatch(setAuth(true));
+        } else {
+          setShouldRedirect(true);
+        }
+      } catch (e) {
+        setShouldRedirect(true);
+      } finally {
+        setIsInit(true);
+      }
     })();
-  }, [navigate]);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (error) setShouldRedirect(true);
+  }, [error]);
+
   if (!isInit) {
-    return null;
+    return <Spin size="large" fullscreen />;
   }
-  return children;
+
+  if (shouldRedirect) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
 };

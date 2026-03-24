@@ -1,13 +1,11 @@
 import { Layout, theme } from 'antd';
-import { ReactNode } from 'react';
 
 import bgImg from '../assets/bgImgAuth.png';
+import { Outlet } from 'react-router';
 
 const { Content, Sider } = Layout;
-type LayoutPageProps = {
-  children: ReactNode;
-};
-const LayoutAuth: React.FC<LayoutPageProps> = ({ children }) => {
+
+const LayoutAuth: React.FC = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -30,14 +28,13 @@ const LayoutAuth: React.FC<LayoutPageProps> = ({ children }) => {
       <Content
         style={{
           display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
           flexDirection: 'column',
-          padding: '0 24px',
-          minHeight: 280,
           overflowY: 'auto',
+          padding: '40px 24px',
         }}>
-        {children}
+        <div style={{ margin: 'auto', width: '100%' }}>
+          <Outlet />
+        </div>
       </Content>
     </Layout>
   );

@@ -7,7 +7,6 @@ import { MetaResponse, Todo, TodoInfo, FilterStatus } from '../types/todo';
 
 import { Flex, message, Spin } from 'antd';
 import { getErrorMessage } from '../helpers/getErrorMessage.ts';
-import LayoutMainApp from './LayoutMainApp.tsx';
 
 const DEFAULT_LIST_INFO = {
   all: 0,
@@ -59,7 +58,7 @@ export default function TodoListPage() {
   }
 
   return (
-    <LayoutMainApp>
+    <>
       <AddTodo updateList={fetchTodoData} />
       <TodoListFilterStatusMenu listInfo={todoListInfo} handleClick={handleClickSelectTasks} />
       {isFetching && todoList.length === 0 ? (
@@ -74,6 +73,6 @@ export default function TodoListPage() {
           onStopEdit={handleStopEdit}
         />
       )}
-    </LayoutMainApp>
+    </>
   );
 }

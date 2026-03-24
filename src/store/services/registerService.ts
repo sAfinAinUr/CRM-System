@@ -23,7 +23,6 @@ export const registerService = createApi({
         body: signupData,
       }),
       transformErrorResponse(baseQueryReturnValue, meta, arg) {
-        console.log({ baseQueryReturnValue, meta, arg });
         if (
           isBaseQueryError(baseQueryReturnValue) &&
           baseQueryReturnValue.status &&
