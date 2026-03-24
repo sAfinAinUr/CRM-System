@@ -42,13 +42,13 @@ body {
 
 @keyframes slide-from-right {
   from {
-    transform: translateX(40px);
+    transform: translateX(20px);
   }
 }
 
 @keyframes slide-to-left {
   to {
-    transform: translateX(-40px);
+    transform: translateX(-20px);
   }
 }
 
