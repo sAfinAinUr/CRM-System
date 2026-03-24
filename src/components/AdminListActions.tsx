@@ -6,15 +6,13 @@ import {
   EllipsisOutlined,
   LockOutlined,
   UnlockOutlined,
-  UserAddOutlined,
-  UserDeleteOutlined,
   UserOutlined
 } from '@ant-design/icons';
 import { Button, Dropdown, MenuProps, Popconfirm } from 'antd';
 
-import { useBlockUserMutation, useUnblockUserMutation, useUpdateRolesMutation } from '../store';
+import { useBlockUserMutation, useUnblockUserMutation } from '../store';
 import { useDeleteUserMutation } from '../store/services/adminService';
-import { Roles, User } from '../types/admin';
+import { User } from '../types/admin';
 
 interface Props {
   user: User;
@@ -24,10 +22,6 @@ interface Props {
 enum Actions {
   block = 'block',
   unblock = 'unblock',
-  makeModerator = 'makeModerator',
-  makeAdmin = 'makeAdmin',
-  deleteAdmin = 'deleteAdmin',
-  deleteModerator = 'deleteModerator',
   delete = 'delete',
   userProfile = 'userProfile'
 }
@@ -39,34 +33,7 @@ const items = [
     icon: <UserOutlined />
   },
   { type: 'divider' },
-  {
-    key: 'roles-group',
-    label: 'Управление правами',
-    type: 'group',
-    children: [
-      {
-        key: Actions.makeModerator,
-        label: 'Назначить модератором',
-        icon: <UserAddOutlined />
-      },
-      {
-        key: Actions.makeAdmin,
-        label: 'Назначить администратором',
-        icon: <UserAddOutlined style={{ color: '#722ed1' }} />
-      },
-      {
-        key: Actions.deleteAdmin,
-        label: 'Разжаловать администратора',
-        icon: <UserDeleteOutlined />
-      },
-      {
-        key: Actions.deleteModerator,
-        label: 'Разжаловать модератора',
-        icon: <UserDeleteOutlined />
-      }
-    ]
-  },
-  { type: 'divider' },
+
   {
     key: Actions.block,
     label: 'Заблокировать',
@@ -85,53 +52,33 @@ const items = [
   }
 ] satisfies MenuProps['items'];
 
-function getItems(user: User, isLoadingRoles: boolean) {
+function getItems(user: User) {
   return items
     .map((item) => {
       if ('type' in item && item.type === 'divider') {
         return item;
       }
 
-      if ('type' in item && item.type === 'group' && item.children) {
-        const filteredChildren = item.children
-          .filter((child: any) => checkVisibility(child.key, user))
-          .map((child) => (isLoadingRoles ? { ...child, disabled: true } : child));
-
-        if (filteredChildren.length === 0) return null;
-
-        return { ...item, children: filteredChildren };
-      }
-
       if (!checkVisibility((item as any).key, user)) {
         return null;
       }
 
-      return isLoadingRoles ? { ...item, disabled: true } : item;
+      return item;
     })
     .filter(Boolean);
 }
 
 function checkVisibility(key: string, user: User): boolean {
   if (key === Actions.userProfile) return true;
-  if (key === Actions.makeAdmin) return !user.roles.includes(Roles.ADMIN) && !user.isBlocked;
-  if (key === Actions.makeModerator)
-    return !user.roles.includes(Roles.MODERATOR) && !user.isBlocked;
-  if (key === Actions.deleteAdmin) return user.roles.includes(Roles.ADMIN);
-  if (key === Actions.deleteModerator) return user.roles.includes(Roles.MODERATOR);
-  if (key === Actions.block)
-    return (
-      !user.isBlocked && !user.roles.includes(Roles.ADMIN) && !user.roles.includes(Roles.MODERATOR)
-    );
+  if (key === Actions.block) return !user.isBlocked;
   if (key === Actions.unblock) return user.isBlocked;
-  if (key === Actions.delete)
-    return !user.roles.includes(Roles.ADMIN) && !user.roles.includes(Roles.MODERATOR);
+  if (key === Actions.delete) return true;
 
   return false;
 }
 
 export default function AdminListActions({ user, refetch }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [updateRoles, { isLoading: isLoadingRoles }] = useUpdateRolesMutation();
   const [blockUser] = useBlockUserMutation();
   const [unblockUser] = useUnblockUserMutation();
   const [deleteUser] = useDeleteUserMutation();
@@ -148,26 +95,6 @@ export default function AdminListActions({ user, refetch }: Props) {
       case Actions.unblock:
         await unblockUser(user.id);
         break;
-      case Actions.makeAdmin:
-        await updateRoles({ id: user.id, roles: [...user.roles, Roles.ADMIN] });
-        break;
-      case Actions.makeModerator:
-        await updateRoles({ id: user.id, roles: [...user.roles, Roles.MODERATOR] });
-        break;
-      case Actions.deleteAdmin:
-        await updateRoles({
-          id: user.id,
-          roles: user.roles.filter((role) => role !== Roles.ADMIN)
-        });
-
-        break;
-      case Actions.deleteModerator:
-        await updateRoles({
-          id: user.id,
-          roles: user.roles.filter((role) => role !== Roles.MODERATOR)
-        });
-
-        break;
 
       case Actions.userProfile:
         navigate(`/UserProfile/${user.id}`);
@@ -179,7 +106,7 @@ export default function AdminListActions({ user, refetch }: Props) {
     refetch();
   };
 
-  const menuItems = getItems(user, isLoadingRoles).map((item) => {
+  const menuItems = getItems(user).map((item) => {
     if (item?.key === Actions.delete) {
       return {
         ...item,

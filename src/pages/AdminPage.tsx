@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Input, Table, TableColumnsType } from 'antd';
 
 import AdminListActions from '../components/AdminListActions.tsx';
+import RoleSelect from '../components/RoleSelect.tsx';
 import { useGetAdminListQuery } from '../store/index.ts';
 import { User, UsersOrderType } from '../types/admin.ts';
 import LayoutMainApp from './LayoutMainApp.tsx';
@@ -43,18 +44,17 @@ const getColumns = (refetch: VoidFunction): TableColumnsType<User> => [
   {
     title: 'Роли',
     dataIndex: 'roles',
-    render(value) {
-      return JSON.stringify(value, null, 2);
-    }
+    key: 'roles',
+    render: (_, user: User) => <RoleSelect user={user} refetch={refetch} />
   },
   {
     title: 'Номер телефона',
     dataIndex: 'phoneNumber'
   },
   {
-    title: 'Action',
-    key: 'action',
-    render: (_, item) => <AdminListActions refetch={refetch} user={item} />
+    title: 'Действия',
+    key: 'actions',
+    render: (_, user: User) => <AdminListActions user={user} refetch={refetch} />
   }
 ];
 
