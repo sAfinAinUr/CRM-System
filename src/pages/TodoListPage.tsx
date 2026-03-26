@@ -7,8 +7,7 @@ import AddTodo from '../components/AddTodo';
 import TodoList from '../components/TodoList';
 import TodoListFilterStatusMenu from '../components/TodoListFilterStatusMenu';
 import { getErrorMessage } from '../helpers/getErrorMessage.ts';
-import { FilterStatus, MetaResponse, Todo, TodoInfo } from '../types/todo';
-import LayoutMainApp from './LayoutMainApp.tsx';
+import { FilterStatus, MetaResponse, Todo, TodoInfo } from '../types/todo.ts';
 
 const DEFAULT_LIST_INFO = {
   all: 0,
@@ -65,7 +64,7 @@ export default function TodoListPage() {
   }
 
   return (
-    <LayoutMainApp>
+    <>
       <AddTodo updateList={fetchTodoData} />
       <TodoListFilterStatusMenu listInfo={todoListInfo} handleClick={handleClickSelectTasks} />
       {isFetching && todoList.length === 0 ? (
@@ -80,6 +79,6 @@ export default function TodoListPage() {
           onStopEdit={handleStopEdit}
         />
       )}
-    </LayoutMainApp>
+    </>
   );
 }

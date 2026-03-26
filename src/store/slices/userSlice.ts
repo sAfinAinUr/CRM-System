@@ -1,6 +1,6 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit/react';
 
-import type { Profile, Role } from '../../types/auth';
+import type { Profile } from '../../types/auth';
 import { RootState } from '../store';
 import { getUserProfileThunk, logoutUserThunk } from '../thunks/userAsyncThunks';
 
@@ -18,6 +18,9 @@ export const userSlice = createSlice({
   reducers: {
     setAuth: (state, action: PayloadAction<boolean>) => {
       state.isAuth = action.payload;
+    },
+    setError: (state, action: PayloadAction<unknown>) => {
+      state.error = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -38,15 +41,12 @@ export const userSlice = createSlice({
   }
 });
 
-export const userSelect = createSelector(
+export const selectUser = createSelector(
   [(state: RootState) => state],
   (state: RootState) => state.userSlice.user
 );
-export const userErrorSelect = createSelector(
+export const selectUserError = createSelector(
   [(state: RootState) => state],
   (state: RootState) => state.userSlice.error
 );
-
-export const userRoleSelect = createSelector([userSelect], (user) => user?.roles || ([] as Role[]));
-
-export const { setAuth } = userSlice.actions;
+export const { setAuth, setError } = userSlice.actions;

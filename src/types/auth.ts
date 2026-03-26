@@ -22,13 +22,13 @@ export interface Profile {
   date: string;
   isBlocked: boolean;
   roles: Role[];
-  phoneNumber?: string;
+  phoneNumber: string;
 }
 
 export interface ProfileRequest {
   username: string;
   email: string;
-  phoneNumber?: string;
+  phoneNumber: string;
 }
 
 export interface PasswordRequest {

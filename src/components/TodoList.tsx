@@ -1,14 +1,14 @@
 import { Flex } from 'antd';
 
 import { Todo } from '../types/todo';
-import TodoItem from './TodoItem.jsx';
+import TodoItem from './TodoItem';
 
-type Props = {
+interface Props {
   list: Todo[];
   updateList: () => Promise<void>;
   onStartEdit: () => void;
   onStopEdit: () => void;
-};
+}
 
 export default function TodoList({ list, updateList, onStartEdit, onStopEdit }: Props) {
   return (

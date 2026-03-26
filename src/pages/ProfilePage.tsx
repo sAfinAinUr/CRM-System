@@ -1,29 +1,47 @@
 import { useNavigate } from 'react-router';
 
-import { Button, Card } from 'antd';
+import { Button, Card, message, Typography } from 'antd';
 
-import { logoutUserThunk, useAppDispatch, useAppSelector, userSelect } from '../store';
-import LayoutMainApp from './LayoutMainApp';
+import { getErrorMessage } from '../helpers/getErrorMessage';
+import { logoutUserThunk, selectUser, useAppDispatch, useAppSelector } from '../store';
 
 export default function ProfilePage() {
-  const user = useAppSelector(userSelect);
+  const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const onLogout = async () => {
-    await dispatch(logoutUserThunk()).unwrap();
-    navigate('/login');
+    try {
+      await dispatch(logoutUserThunk()).unwrap();
+    } catch (error) {
+      message.error(getErrorMessage(error));
+    } finally {
+      navigate('/login');
+    }
   };
+
+  const { Text, Paragraph } = Typography;
 
   if (!user) return null;
 
   return (
-    <LayoutMainApp>
-      <Card title={user.username} variant="borderless" style={{ width: 300 }}>
-        <p> {user.email}</p>
-        {user.phoneNumber && <p>{user.phoneNumber}</p>}
+    <>
+      <Card title={<Text strong>{user.username}</Text>} variant="borderless">
+        <Paragraph>
+          <Text type="secondary">Email: </Text>
+          <Text>{user.email}</Text>
+        </Paragraph>
+
+        {user.phoneNumber && (
+          <Paragraph>
+            <Text type="secondary">Тел: </Text>
+            <Text>{user.phoneNumber}</Text>
+          </Paragraph>
+        )}
       </Card>
-      <Button onClick={onLogout}>ВЫЙТИ</Button>
-    </LayoutMainApp>
+      <Button type="primary" danger onClick={onLogout}>
+        ВЫЙТИ
+      </Button>
+    </>
   );
 }

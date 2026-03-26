@@ -1,42 +1,55 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { PropsWithChildren, useEffect, useState } from 'react';
+import { Navigate } from 'react-router';
+
+import { Spin } from 'antd';
 
 import { getRefreshTokenFromCookie } from '../api/axios';
 import {
   getUserProfileThunk,
+  selectUserError,
   setAuth,
   useAppDispatch,
-  useAppSelector,
-  userErrorSelect
+  useAppSelector
 } from '../store';
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isInit, setIsInit] = useState(false);
-  const error = useAppSelector(userErrorSelect);
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+export const AuthProvider = ({ children }: PropsWithChildren) => {
+  const [isInit, setIsInit] = useState<boolean>(false);
+  const [shouldRedirect, setShouldRedirect] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (error) navigate('/login');
-  }, [error, navigate]);
+  const error = useAppSelector(selectUserError);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (isInit) return;
 
     (async () => {
-      const refreshToken = await getRefreshTokenFromCookie();
-      if (refreshToken) {
-        await dispatch(getUserProfileThunk());
-        dispatch(setAuth(true));
+      try {
+        const refreshToken = await getRefreshTokenFromCookie();
+        if (refreshToken) {
+          await dispatch(getUserProfileThunk()).unwrap();
+          dispatch(setAuth(true));
+        } else {
+          setShouldRedirect(true);
+        }
+      } catch {
+        setShouldRedirect(true);
+      } finally {
+        setIsInit(true);
       }
-
-      setIsInit(true);
     })();
-  }, [navigate, dispatch, isInit]);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (error) setShouldRedirect(true);
+  }, [error]);
 
   if (!isInit) {
-    return null;
+    return <Spin size="large" fullscreen />;
   }
 
-  return children;
+  if (shouldRedirect) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
 };

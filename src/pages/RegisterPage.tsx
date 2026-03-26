@@ -3,9 +3,9 @@ import { Link } from 'react-router';
 
 import { Button, Form, Input, message, Typography } from 'antd';
 
+import { UI_CONFIG, VALIDATION } from '../helpers/getValidationConfig';
 import { useSignupMutation } from '../store';
 import { UserRegistration } from '../types/auth';
-import LayoutAuth from './LayoutAuth';
 
 const { Title, Text } = Typography;
 
@@ -14,12 +14,7 @@ const RegisterPage = () => {
 
   const [form] = Form.useForm();
 
-  const onFinish = async ({
-    confirm: _confirm,
-    ...rest
-  }: UserRegistration & { confirm: string }) => {
-    console.log('Данные формы:', rest);
-
+  const onFinish = async ({ ...rest }: UserRegistration & { confirm: string }) => {
     signup(rest);
   };
 
@@ -29,9 +24,20 @@ const RegisterPage = () => {
     }
   }, [error, isError]);
 
+  const commonInputStyle = {
+    width: '100%',
+    maxWidth: UI_CONFIG.MAX_WIDTH,
+    height: UI_CONFIG.INPUT_HEIGHT
+  };
+
+  const submitButtonStyle = {
+    ...commonInputStyle,
+    backgroundColor: UI_CONFIG.PURPLE_COLOR
+  };
+
   if (isSuccess) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
+      <div style={{ textAlign: 'center', padding: UI_CONFIG.SUCCESS_PADDING }}>
         <Title level={3}>Вы успешно зарегистрированы!</Title>
 
         <Link to="/login">Перейти на страницу авторизации для входа в систему</Link>
@@ -39,141 +45,114 @@ const RegisterPage = () => {
     );
   }
 
-  const purpleColor = '#7F265B';
-
-  const inputStyle = { width: '100%', maxWidth: '420px', height: 45 };
-
-  const buttonStyle = {
-    backgroundColor: `${purpleColor}`,
-
-    width: '100%',
-
-    maxWidth: '420px',
-
-    height: 45
-  };
-
   return (
-    <LayoutAuth>
-      <div style={{ width: '100%', maxWidth: '420px', margin: '0 auto' }}>
-        <Title level={2}>Регистрация</Title>
+    <div style={{ width: '100%', maxWidth: UI_CONFIG.MAX_WIDTH, margin: '0 auto' }}>
+      <Title level={2}>Регистрация</Title>
+      <Form form={form} layout="vertical" onFinish={onFinish} autoComplete="off">
+        <Form.Item
+          label="Имя пользователя"
+          name="username"
+          rules={[
+            {
+              min: VALIDATION.USERNAME.MIN,
+              transform: (value) => value?.trim(),
+              message: `Минимум ${VALIDATION.USERNAME.MIN} символ`
+            },
+            {
+              max: VALIDATION.USERNAME.MAX,
+              message: `Максимум ${VALIDATION.USERNAME.MAX} символов`
+            },
+            { whitespace: true, required: true, message: 'Введите имя пользователя' },
+            { pattern: VALIDATION.USERNAME.PATTERN, message: 'Только русские или латинские буквы' }
+          ]}>
+          <Input style={commonInputStyle} />
+        </Form.Item>
 
-        <Form form={form} layout="vertical" onFinish={onFinish} autoComplete="off">
-          <Form.Item
-            label="Имя пользователя"
-            name="username"
-            rules={[
-              {
-                min: 1,
+        <Form.Item
+          label="Логин"
+          name="login"
+          rules={[
+            {
+              min: VALIDATION.LOGIN.MIN,
+              transform: (value) => value?.trim(),
+              message: `Минимум ${VALIDATION.LOGIN.MIN} символа`
+            },
+            {
+              max: VALIDATION.LOGIN.MAX,
+              message: `Максимум ${VALIDATION.LOGIN.MAX} символа`
+            },
+            { required: true, message: 'Введите логин' },
+            { pattern: VALIDATION.LOGIN.PATTERN, message: 'Только латинские буквы' }
+          ]}>
+          <Input style={commonInputStyle} />
+        </Form.Item>
 
-                transform: (value) => value?.trim(),
+        <Form.Item
+          label="Пароль"
+          name="password"
+          rules={[
+            { required: true, message: 'Введите пароль' },
+            {
+              min: VALIDATION.PASSWORD.MIN,
+              max: VALIDATION.PASSWORD.MAX,
+              message: `От ${VALIDATION.PASSWORD.MIN} до ${VALIDATION.PASSWORD.MAX} символов`
+            }
+          ]}>
+          <Input.Password placeholder="******" style={commonInputStyle} />
+        </Form.Item>
 
-                message: 'Минимум 1 символ (не считая пробелы)'
-              },
-
-              {
-                max: 60,
-
-                message: 'Максимум 60 символов'
-              },
-
-              { whitespace: true, required: true, message: 'Введите имя пользователя' },
-
-              { pattern: /^[а-яА-Яa-zA-Z\s]+$/, message: 'Только русские или латинские буквы' }
-            ]}>
-            <Input style={inputStyle} />
-          </Form.Item>
-
-          <Form.Item
-            label="Логин"
-            name="login"
-            rules={[
-              {
-                min: 2,
-
-                transform: (value) => value?.trim(),
-
-                message: 'Минимум 2 символа (не считая пробелы)'
-              },
-
-              {
-                max: 60,
-
-                message: 'Максимум 64 символа'
-              },
-
-              { required: true, message: 'Введите логин' },
-
-              { pattern: /^[a-zA-Z]+$/, message: 'Только латинские буквы' }
-            ]}>
-            <Input style={inputStyle} />
-          </Form.Item>
-
-          <Form.Item
-            label="Пароль"
-            name="password"
-            rules={[
-              { required: true, message: 'Введите пароль' },
-
-              { min: 6, max: 60, message: 'От 6 до 60 символов' }
-            ]}>
-            <Input.Password placeholder="******" style={inputStyle} />
-          </Form.Item>
-
-          <Form.Item
-            label="Повторите пароль"
-            name="confirm"
-            dependencies={['password']}
-            rules={[
-              { required: true, message: 'Подтвердите пароль' },
-
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue('password') === value) {
-                    return Promise.resolve();
-                  }
-
-                  return Promise.reject(new Error('Пароли не совпадают'));
+        <Form.Item
+          label="Повторите пароль"
+          name="confirm"
+          dependencies={['password']}
+          rules={[
+            { required: true, message: 'Подтвердите пароль' },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue('password') === value) {
+                  return Promise.resolve();
                 }
-              })
-            ]}>
-            <Input.Password placeholder="******" style={inputStyle} />
-          </Form.Item>
 
-          <Form.Item
-            label="Почтовый адрес"
-            name="email"
-            rules={[
-              { required: true, message: 'Введите email' },
+                return Promise.reject(new Error('Пароли не совпадают'));
+              }
+            })
+          ]}>
+          <Input.Password placeholder="******" style={commonInputStyle} />
+        </Form.Item>
 
-              { type: 'email', message: 'Введите валидный email' }
-            ]}>
-            <Input placeholder="example@mail.com" style={inputStyle} />
-          </Form.Item>
+        <Form.Item
+          label="Почтовый адрес"
+          name="email"
+          rules={[
+            { required: true, message: 'Введите email' },
+            { type: 'email', message: 'Введите валидный email' }
+          ]}>
+          <Input placeholder="example@mail.com" style={commonInputStyle} />
+        </Form.Item>
 
-          <Form.Item
-            label="Телефон"
-            name="phoneNumber"
-            rules={[{ pattern: /^\+?[1-9]\d{1,14}$/, message: 'Введите валидный номер телефона' }]}>
-            <Input placeholder="+79991234567" style={inputStyle} />
-          </Form.Item>
+        <Form.Item
+          label="Телефон"
+          name="phoneNumber"
+          rules={[
+            { pattern: VALIDATION.PHONE_PATTERN, message: 'Введите валидный номер телефона' }
+          ]}>
+          <Input placeholder="+79991234567" style={commonInputStyle} />
+        </Form.Item>
 
-          <Form.Item>
-            <Button type="primary" htmlType="submit" loading={isLoading} style={buttonStyle}>
-              Зарегистрироваться
-            </Button>
-          </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={isLoading} style={submitButtonStyle}>
+            Зарегистрироваться
+          </Button>
+        </Form.Item>
 
-          <div style={{ textAlign: 'center' }}>
-            <Text type="secondary">Уже есть аккаунт? </Text>
-
-            <Link to="/login" style={{ color: purpleColor }}>
-              Войти
-            </Link>
-          </div>
-        </Form>
-      </div>
-    </LayoutAuth>
+        <div style={{ textAlign: 'center' }}>
+          <Text type="secondary">Уже есть аккаунт? </Text>
+          <Link to="/login" style={{ color: UI_CONFIG.PURPLE_COLOR }}>
+            Войти
+          </Link>
+        </div>
+      </Form>
+    </div>
   );
 };
 

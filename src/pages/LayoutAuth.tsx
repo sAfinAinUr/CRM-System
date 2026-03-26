@@ -1,18 +1,14 @@
-import { ReactNode } from 'react';
+import { Outlet } from 'react-router';
 
 import { Layout, theme } from 'antd';
 
-import bgImg from '../assets/bgImgAuth.png';
+import backgroundImage from '../assets/bgImgAuth.png';
 
 const { Content, Sider } = Layout;
 
-type Props = {
-  children: ReactNode;
-};
-
-const LayoutAuth: React.FC<Props> = ({ children }) => {
+const LayoutAuth: React.FC = () => {
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { colorBgContainer, borderRadiusLG }
   } = theme.useToken();
 
   return (
@@ -20,7 +16,7 @@ const LayoutAuth: React.FC<Props> = ({ children }) => {
       style={{
         background: colorBgContainer,
         borderRadius: borderRadiusLG,
-        width: '100%',
+        width: '100%'
       }}>
       <Sider
         width={911}
@@ -28,19 +24,18 @@ const LayoutAuth: React.FC<Props> = ({ children }) => {
         collapsedWidth="0"
         trigger={null}
         style={{ background: colorBgContainer }}>
-        <img src={bgImg} style={{ height: '100%', objectFit: 'cover' }} alt="bg" />
+        <img src={backgroundImage} style={{ height: '100%', objectFit: 'cover' }} alt="bg" />
       </Sider>
       <Content
         style={{
           display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
           flexDirection: 'column',
-          padding: '0 24px',
-          minHeight: 280,
           overflowY: 'auto',
+          padding: '40px 24px'
         }}>
-        {children}
+        <div style={{ margin: 'auto', width: '100%' }}>
+          <Outlet />
+        </div>
       </Content>
     </Layout>
   );

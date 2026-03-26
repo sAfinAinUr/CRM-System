@@ -1,8 +1,8 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 import { setToken } from '../../api/axios';
-import type { AuthData, Token } from '../../types/auth';
-import { axiosBaseQuery, isBaseQueryError } from './baseQuery';
+import { AuthData, Token } from '../../types/auth';
+import { getAxiosBaseQuery, isBaseQueryError } from './baseQuery';
 
 const errorStatus = {
   400: 'Ошибка десериализации запроса или неверный ввод.',
@@ -11,7 +11,7 @@ const errorStatus = {
 };
 
 export const authService = createApi({
-  baseQuery: axiosBaseQuery({
+  baseQuery: getAxiosBaseQuery({
     baseUrl: import.meta.env.VITE_APP_API_BASE_URL
   }),
 
@@ -24,10 +24,9 @@ export const authService = createApi({
         method: 'POST',
         body: authData
       }),
-      transformResponse(data: Token) {
+      onQueryStarted: async (_, { queryFulfilled }) => {
+        const { data } = await queryFulfilled;
         setToken(data);
-
-        return data;
       },
       transformErrorResponse(baseQueryReturnValue) {
         if (

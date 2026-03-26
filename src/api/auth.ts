@@ -5,10 +5,9 @@ import {
   ProfileRequest,
   RefreshToken,
   Token,
-  UserRegistration
+  UserRegistration,
 } from '../types/auth';
 import { api } from './axios';
-import { tokenService } from './tokenService';
 
 export async function registerUser(registerPayload: UserRegistration): Promise<void> {
   await api.post('/auth/signup', registerPayload);
@@ -43,13 +42,5 @@ export async function changePassword(passwordPayload: PasswordRequest): Promise<
 }
 
 export async function logout(): Promise<void> {
-  try {
-    await api.post('/user/logout');
-  } catch (error) {
-    console.log(error);
-    throw error;
-  } finally {
-    await cookieStore.delete('refreshToken');
-    tokenService.clearToken();
-  }
+  await api.post('/user/logout');
 }
