@@ -3,22 +3,19 @@ import { updateToken } from './auth';
 import { Token } from '../types/auth';
 import { tokenService } from './tokenService';
 
-const securedRoutes = [
-  '/user/profile',
-  '/user/profile/reset-password',
-  '/user/logout',
-  '/auth/refresh',
-];
+import { store, setError as setStoreUserError, setError } from '../store';
 
 let isRefreshing = false;
 let queueFailedResponses: { resolve: (value: unknown) => void; reject: () => void }[] = [];
 
-export const api = axios.create({
+export const baseApi = axios.create({
   baseURL: import.meta.env.VITE_APP_API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+export const api = baseApi.create();
 
 api.interceptors.request.use(async (request) => {
   const accessToken = tokenService.getToken();
@@ -33,19 +30,17 @@ api.interceptors.response.use(
   async (error) => {
     const isAxiosError = axios.isAxiosError(error);
     const isUnauthorizedError = error.response?.status === 401;
-    const isSecuredRoute =
-      isAxiosError &&
-      securedRoutes.some((url) => {
-        return error.config?.url?.includes(url);
-      });
+    const isLogin = isAxiosError && error.config?.url?.includes('/signin');
+
     const errorConfig = error?.config;
-    if (!isAxiosError || !errorConfig || !isUnauthorizedError || !isSecuredRoute) {
+    if (!isAxiosError || !errorConfig || !isUnauthorizedError || isLogin) {
       return Promise.reject(error);
     }
 
     if (errorConfig.url.includes('/auth/refresh')) {
       tokenService.clearToken();
-      window.location.href = '/login';
+      store.dispatch(setStoreUserError(error));
+      return Promise.reject(error);
     }
     if (isRefreshing) {
       return new Promise((resolve, reject) => {
@@ -74,8 +69,9 @@ api.interceptors.response.use(
     } catch {
       queueFailedResponses.forEach(({ reject }) => reject());
       queueFailedResponses = [];
-      tokenService.clearToken();
-      window.location.href = '/login';
+      clearToken();
+
+      store.dispatch(setStoreUserError(error));
     }
   }
 );
@@ -86,6 +82,11 @@ export async function setToken(token: Token) {
     name: 'refreshToken',
     value: token.refreshToken,
   });
+}
+
+export function clearToken() {
+  tokenService.clearToken();
+  cookieStore.delete('refreshToken');
 }
 
 export async function getRefreshTokenFromCookie(): Promise<string | undefined> {

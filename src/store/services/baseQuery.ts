@@ -17,7 +17,7 @@ export const isBaseQueryError = (error: unknown): error is BaseQueryError => {
   );
 };
 
-export const axiosBaseQuery =
+export const getAxiosBaseQuery =
   (
     { baseUrl }: { baseUrl: string } = { baseUrl: '' }
   ): BaseQueryFn<

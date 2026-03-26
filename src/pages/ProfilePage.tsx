@@ -1,16 +1,22 @@
-import { Button, Card, Typography } from 'antd';
-import { logoutUserThunk, useAppDispatch, useAppSelector, userSelect } from '../store';
+import { Button, Card, message, Typography } from 'antd';
+import { logoutUserThunk, useAppDispatch, useAppSelector, selectUser } from '../store';
 
 import { useNavigate } from 'react-router';
+import { getErrorMessage } from '../helpers/getErrorMessage';
 
 export default function ProfilePage() {
-  const user = useAppSelector(userSelect);
+  const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const onLogout = async () => {
-    await dispatch(logoutUserThunk()).unwrap();
-    navigate('/login');
+    try {
+      await dispatch(logoutUserThunk()).unwrap();
+    } catch (error) {
+      message.error(getErrorMessage(error));
+    } finally {
+      navigate('/login');
+    }
   };
 
   const { Text, Paragraph } = Typography;

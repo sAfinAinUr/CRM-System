@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 
 import { useLoginMutation } from '../store';
 import { AuthData } from '../types/auth';
+import { VALIDATION } from '../helpers/getValidationConfig';
 
 const { Title, Text } = Typography;
 
@@ -44,13 +45,32 @@ const LoginForm = () => {
         <Form.Item
           label="Логин"
           name="login"
-          rules={[{ required: true, message: 'Пожалуйста, введите логин' }]}>
+          rules={[
+            {
+              min: VALIDATION.LOGIN.MIN,
+              transform: (value) => value?.trim(),
+              message: `Минимум ${VALIDATION.LOGIN.MIN} символа`,
+            },
+            {
+              max: VALIDATION.LOGIN.MAX,
+              message: `Максимум ${VALIDATION.LOGIN.MAX} символа`,
+            },
+            { required: true, message: 'Введите логин' },
+            { pattern: VALIDATION.LOGIN.PATTERN, message: 'Только латинские буквы' },
+          ]}>
           <Input placeholder="Введите логин" style={inputStyle} />
         </Form.Item>
         <Form.Item
           label="Пароль"
           name="password"
-          rules={[{ required: true, message: 'Пожалуйста, введите пароль' }]}>
+          rules={[
+            { required: true, message: 'Введите пароль' },
+            {
+              min: VALIDATION.PASSWORD.MIN,
+              max: VALIDATION.PASSWORD.MAX,
+              message: `От ${VALIDATION.PASSWORD.MIN} до ${VALIDATION.PASSWORD.MAX} символов`,
+            },
+          ]}>
           <Input.Password placeholder="Введите пароль" style={inputStyle} />
         </Form.Item>
         <Form.Item>

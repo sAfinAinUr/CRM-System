@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import type { UserRegistration } from '../../types/auth';
-import { axiosBaseQuery, isBaseQueryError } from './baseQuery';
+import { getAxiosBaseQuery, isBaseQueryError } from './baseQuery';
 
 const errorStatus = {
   400: 'Ошибка десериализации запроса или неверный ввод',
@@ -9,7 +9,7 @@ const errorStatus = {
 };
 
 export const registerService = createApi({
-  baseQuery: axiosBaseQuery({
+  baseQuery: getAxiosBaseQuery({
     baseUrl: import.meta.env.VITE_APP_API_BASE_URL,
   }),
 
@@ -22,7 +22,7 @@ export const registerService = createApi({
         method: 'POST',
         body: signupData,
       }),
-      transformErrorResponse(baseQueryReturnValue, meta, arg) {
+      transformErrorResponse(baseQueryReturnValue) {
         if (
           isBaseQueryError(baseQueryReturnValue) &&
           baseQueryReturnValue.status &&

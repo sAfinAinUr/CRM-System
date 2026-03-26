@@ -16,33 +16,33 @@ import {
 import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons';
 import { getErrorMessage } from '../helpers/getErrorMessage.ts';
 
-type TodoItemProps = {
+interface Props {
   todo: Todo;
   updateList: () => Promise<void>;
   onStartEdit: () => void;
   onStopEdit: () => void;
-};
+}
 
 interface EditTodoFieldType {
   todoName?: string;
 }
 
-export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: TodoItemProps) {
+export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: Props) {
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
-  function handleClickStartEdit() {
+  function startEdit() {
     setIsEditing((editing) => !editing);
     onStartEdit();
   }
 
-  async function handleClickEditTodo(event: EditTodoFieldType) {
+  async function handleEditTodo(event: EditTodoFieldType) {
     if (todo.title === event.todoName) {
       setIsEditing(false);
       return;
     }
     try {
       await editTodo(todo.id, { title: event.todoName });
-      updateList();
+      await updateList();
       setIsEditing(false);
       onStopEdit();
     } catch (error: unknown) {
@@ -50,12 +50,12 @@ export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: 
     }
   }
 
-  function handleClickCloseEditing() {
+  function handleCloseEditing() {
     setIsEditing(false);
     onStopEdit();
   }
 
-  async function handleClickDeleteTask() {
+  async function handleDeleteTask() {
     try {
       await deleteTodo(todo.id);
       updateList();
@@ -75,7 +75,7 @@ export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: 
 
   const [form] = Form.useForm();
 
-  const onFinishFailed = () => {
+  const showErrorMesssage = () => {
     message.error('Submit failed!');
   };
 
@@ -89,8 +89,8 @@ export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: 
               preserve={false}
               size="large"
               layout="inline"
-              onFinish={handleClickEditTodo}
-              onFinishFailed={onFinishFailed}
+              onFinish={handleEditTodo}
+              onFinishFailed={showErrorMesssage}
               initialValues={{
                 todoName: todo.title,
               }}
@@ -130,7 +130,7 @@ export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: 
                   type="dashed"
                   icon={<CloseOutlined />}
                   size="large"
-                  onClick={handleClickCloseEditing}
+                  onClick={handleCloseEditing}
                 />
               </Form.Item>
             </Form>
@@ -154,11 +154,11 @@ export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: 
                 variant="solid"
                 icon={<FormOutlined />}
                 size="large"
-                onClick={handleClickStartEdit}
+                onClick={startEdit}
               />
               <Popconfirm
                 title="Вы действительно хотите удалить задачу?"
-                onConfirm={handleClickDeleteTask}
+                onConfirm={handleDeleteTask}
                 okText="Да"
                 cancelText="Нет">
                 <Button color="danger" variant="solid" icon={<DeleteOutlined />} size="large" />

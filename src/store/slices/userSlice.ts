@@ -17,7 +17,10 @@ export const userSlice = createSlice({
   reducers: {
     setAuth: (state, action: PayloadAction<boolean>) => {
       state.isAuth = action.payload;
-    }
+    },
+    setError: (state, action: PayloadAction<unknown>) => {
+      state.error = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -34,15 +37,15 @@ export const userSlice = createSlice({
       .addCase(logoutUserThunk.rejected, (state, action) => {
         state.error = action.error;
       });
-  }
+  },
 });
 
-export const userSelect = createSelector(
+export const selectUser = createSelector(
   [(state: RootState) => state],
   (state: RootState) => state.userSlice.user
 );
-export const userErrorSelect = createSelector(
+export const selectUserError = createSelector(
   [(state: RootState) => state],
   (state: RootState) => state.userSlice.error
 );
-export const { setAuth } = userSlice.actions;
+export const { setAuth, setError } = userSlice.actions;

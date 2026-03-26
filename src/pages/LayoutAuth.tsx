@@ -1,6 +1,6 @@
 import { Layout, theme } from 'antd';
 
-import bgImg from '../assets/bgImgAuth.png';
+import backgroundImage from '../assets/bgImgAuth.png';
 import { Outlet } from 'react-router';
 
 const { Content, Sider } = Layout;
@@ -23,7 +23,7 @@ const LayoutAuth: React.FC = () => {
         collapsedWidth="0"
         trigger={null}
         style={{ background: colorBgContainer }}>
-        <img src={bgImg} style={{ height: '100%', objectFit: 'cover' }} alt="bg" />
+        <img src={backgroundImage} style={{ height: '100%', objectFit: 'cover' }} alt="bg" />
       </Sider>
       <Content
         style={{

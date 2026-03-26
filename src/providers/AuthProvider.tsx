@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 import { Navigate } from 'react-router';
 import {
   getUserProfileThunk,
   setAuth,
   useAppDispatch,
   useAppSelector,
-  userErrorSelect,
+  selectUserError,
 } from '../store';
 import { getRefreshTokenFromCookie } from '../api/axios';
 import { Spin } from 'antd';
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isInit, setIsInit] = useState(false);
-  const [shouldRedirect, setShouldRedirect] = useState(false);
+export const AuthProvider = ({ children }: PropsWithChildren) => {
+  const [isInit, setIsInit] = useState<boolean>(false);
+  const [shouldRedirect, setShouldRedirect] = useState<boolean>(false);
 
-  const error = useAppSelector(userErrorSelect);
+  const error = useAppSelector(selectUserError);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
