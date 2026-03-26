@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { setError, setError as setStoreUserError, store } from '../store';
+import { setError as setStoreUserError } from '../store';
 import { Token } from '../types/auth';
 import { updateToken } from './auth';
 import { tokenService } from './tokenService';
@@ -34,13 +34,26 @@ api.interceptors.response.use(
     const isLogin = isAxiosError && error.config?.url?.includes('/signin');
 
     const errorConfig = error?.config;
+
+    // баг системы, error.response пуст, хотя должен быть 429
+    if (isAxiosError && !error.response && errorConfig) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(api.request(errorConfig));
+        }, 1000);
+      });
+    }
+
     if (!isAxiosError || !errorConfig || !isUnauthorizedError || isLogin) {
       return Promise.reject(error);
     }
 
     if (errorConfig.url.includes('/auth/refresh')) {
       tokenService.clearToken();
-      store.dispatch(setStoreUserError(error));
+
+      import('../store/store').then(({ store }) => {
+        store.dispatch(setStoreUserError(error));
+      });
 
       return Promise.reject(error);
     }
@@ -75,7 +88,9 @@ api.interceptors.response.use(
       queueFailedResponses = [];
       clearToken();
 
-      store.dispatch(setStoreUserError(error));
+      import('../store/store').then(({ store }) => {
+        store.dispatch(setStoreUserError(error));
+      });
     }
   }
 );

@@ -7,12 +7,14 @@ import {
   UserRolesRequest,
   UsersListResponse
 } from '../../types/admin';
-import { axiosBaseQuery } from './baseQuery';
+import { getAxiosBaseQuery } from './baseQuery';
 
 export const adminService = createApi({
-  baseQuery: axiosBaseQuery({
-    baseUrl: import.meta.env.VITE_APP_API_BASE_URL
-  }),
+  baseQuery: (args, api, extraOptions) => {
+    return getAxiosBaseQuery({
+      baseUrl: import.meta.env.VITE_APP_API_BASE_URL
+    })(args, api, extraOptions);
+  },
 
   reducerPath: 'adminService',
   tagTypes: ['admin'],

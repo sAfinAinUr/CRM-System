@@ -6,7 +6,6 @@ import { Button, Card, Form, Input, message } from 'antd';
 import { getErrorMessage } from '../helpers/getErrorMessage';
 import { useGetUserProfileQuery, useUpdateUserMutation } from '../store';
 import { UserRequest } from '../types/admin';
-import LayoutMainApp from './LayoutMainApp';
 
 type UserRequestWithoutId = Omit<UserRequest, 'id'>;
 
@@ -26,12 +25,6 @@ export default function UserProfilePage() {
 
   const onSave = async (values: UserRequestWithoutId) => {
     if (!data) return;
-
-    // const initData: UserRequestWithoutId = {
-    //   username: data.username,
-    //   email: data.email,
-    //   phoneNumber: data.phoneNumber
-    // };
 
     const changedValues = (Object.keys(values) as Array<keyof UserRequestWithoutId>).reduce(
       (acc: Partial<UserRequest>, key: keyof UserRequestWithoutId) => {
@@ -61,7 +54,7 @@ export default function UserProfilePage() {
   };
 
   return (
-    <LayoutMainApp>
+    <>
       {data &&
         (isEditing ? (
           <Form
@@ -122,6 +115,6 @@ export default function UserProfilePage() {
           </>
         ))}
       <Button onClick={exit}>назад</Button>
-    </LayoutMainApp>
+    </>
   );
 }

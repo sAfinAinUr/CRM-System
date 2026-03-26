@@ -11,9 +11,11 @@ const errorStatus = {
 };
 
 export const authService = createApi({
-  baseQuery: getAxiosBaseQuery({
-    baseUrl: import.meta.env.VITE_APP_API_BASE_URL
-  }),
+  baseQuery: (args, api, extraOptions) => {
+    return getAxiosBaseQuery({
+      baseUrl: import.meta.env.VITE_APP_API_BASE_URL
+    })(args, api, extraOptions);
+  },
 
   reducerPath: 'authService',
   tagTypes: ['auth'],

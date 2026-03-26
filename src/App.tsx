@@ -1,6 +1,7 @@
 import { Provider } from 'react-redux';
 import { createBrowserRouter, RouterProvider } from 'react-router';
 
+import AdminPage from './pages/AdminPage';
 import LayoutAuth from './pages/LayoutAuth';
 import LayoutMainApp from './pages/LayoutMainApp';
 import LoginPage from './pages/LoginPage';
@@ -21,6 +22,14 @@ const router = createBrowserRouter([
       {
         path: '/profile',
         element: <ProfilePage />
+      },
+      {
+        path: '/admin',
+        element: <AdminPage />
+      },
+      {
+        path: '/UserProfile/:id',
+        Component: UserProfilePage
       }
     ]
   },

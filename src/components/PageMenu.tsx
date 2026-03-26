@@ -4,7 +4,7 @@ import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import MenuItem from 'antd/es/menu/MenuItem';
 
-import { useAppSelector, userRoleSelect } from '../store';
+import { selectUserRoles, useAppSelector } from '../store';
 import { Role } from '../types/auth';
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -38,7 +38,7 @@ function getItemsByRoles(roles: Role[]) {
 }
 
 export default function PageMenu() {
-  const roles = useAppSelector(userRoleSelect);
+  const roles = useAppSelector(selectUserRoles);
   const navigate = useNavigate();
   const { pathname } = useLocation();
 

@@ -5,7 +5,7 @@ import {
   ProfileRequest,
   RefreshToken,
   Token,
-  UserRegistration,
+  UserRegistration
 } from '../types/auth';
 import { api } from './axios';
 

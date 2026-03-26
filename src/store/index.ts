@@ -9,5 +9,11 @@ export {
 } from './services/adminService';
 export { useLoginMutation } from './services/authService';
 export { useSignupMutation } from './services/registerService';
-export { selectUser, selectUserError, setAuth, setError } from './slices/userSlice';
+export {
+  selectUser,
+  selectUserError,
+  selectUserRoles,
+  setAuth,
+  setError
+} from './slices/userSlice';
 export { getUserProfileThunk, logoutUserThunk } from './thunks/userAsyncThunks';

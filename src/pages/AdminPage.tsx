@@ -6,7 +6,6 @@ import AdminListActions from '../components/AdminListActions.tsx';
 import RoleSelect from '../components/RoleSelect.tsx';
 import { useGetAdminListQuery } from '../store/index.ts';
 import { User, UsersOrderType } from '../types/admin.ts';
-import LayoutMainApp from './LayoutMainApp.tsx';
 
 const getColumns = (refetch: VoidFunction): TableColumnsType<User> => [
   {
@@ -89,7 +88,7 @@ export default function AdminPage() {
   if (!isSuccess) return null;
 
   return (
-    <LayoutMainApp>
+    <>
       <Input.Search value={searchText} onChange={(e) => setSearchText(e.target.value)} />
       <Table<User>
         columns={getColumns(refetch)}
@@ -118,6 +117,6 @@ export default function AdminPage() {
           }
         }}
       />
-    </LayoutMainApp>
+    </>
   );
 }
