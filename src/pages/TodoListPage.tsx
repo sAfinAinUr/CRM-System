@@ -1,12 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { getTodoList } from '../api/http';
+import { getTodoList } from '../api/todo';
 import TodoList from '../components/TodoList';
 import TodoListFilterStatusMenu from '../components/TodoListFilterStatusMenu';
 import AddTodo from '../components/AddTodo';
-import { MetaResponse, Todo, TodoInfo, FilterStatus } from '../types/types.ts';
+import { MetaResponse, Todo, TodoInfo, FilterStatus } from '../types/todo';
 
 import { Flex, message, Spin } from 'antd';
-import LayoutPage from './LayoutPage.tsx';
 import { getErrorMessage } from '../helpers/getErrorMessage.ts';
 
 const DEFAULT_LIST_INFO = {
@@ -59,7 +58,7 @@ export default function TodoListPage() {
   }
 
   return (
-    <LayoutPage>
+    <>
       <AddTodo updateList={fetchTodoData} />
       <TodoListFilterStatusMenu listInfo={todoListInfo} handleClick={handleClickSelectTasks} />
       {isFetching && todoList.length === 0 ? (
@@ -74,6 +73,6 @@ export default function TodoListPage() {
           onStopEdit={handleStopEdit}
         />
       )}
-    </LayoutPage>
+    </>
   );
 }

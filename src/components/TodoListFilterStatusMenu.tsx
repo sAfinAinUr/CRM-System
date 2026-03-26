@@ -1,4 +1,4 @@
-import { TodoInfo, FilterStatus } from '../types/types.ts';
+import { TodoInfo, FilterStatus } from '../types/todo';
 import { Tabs } from 'antd';
 import type { TabsProps } from 'antd';
 
