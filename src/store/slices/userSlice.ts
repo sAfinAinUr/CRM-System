@@ -41,14 +41,8 @@ export const userSlice = createSlice({
   }
 });
 
-export const selectUser = createSelector(
-  [(state: RootState) => state],
-  (state: RootState) => state.userSlice.user
-);
-export const selectUserError = createSelector(
-  [(state: RootState) => state],
-  (state: RootState) => state.userSlice.error
-);
+export const selectUser = (state: RootState) => state.userSlice.user;
+export const selectUserError = (state: RootState) => state.userSlice.error;
 
 export const selectUserRoles = createSelector(
   [selectUser],

@@ -19,15 +19,10 @@ const ROLE_OPTIONS = [
   { label: 'Пользователь', value: Roles.USER }
 ];
 
-export default function RoleSelect({ user, refetch }: { user: User; refetch: () => void }) {
+export default function RoleSelect({ user }: { user: User }) {
   const [isEditing, setIsEditing] = useState(false);
   const [tempRoles, setTempRoles] = useState<Roles[]>(user.roles);
   const [updateRoles, { isLoading }] = useUpdateRolesMutation();
-
-  const dynamicOptions = ROLE_OPTIONS.map((option) => ({
-    ...option,
-    disabled: tempRoles.length === 1 && tempRoles.includes(option.value)
-  }));
 
   const handleEdit = () => {
     setTempRoles(user.roles);
@@ -52,7 +47,6 @@ export default function RoleSelect({ user, refetch }: { user: User; refetch: () 
     try {
       await updateRoles({ id: user.id, roles: tempRoles }).unwrap();
       message.success('Роли обновлены');
-      refetch();
       setIsEditing(false);
     } catch (e) {
       message.error(getErrorMessage(e));
@@ -60,6 +54,11 @@ export default function RoleSelect({ user, refetch }: { user: User; refetch: () 
   };
 
   if (isEditing) {
+    const dynamicOptions = ROLE_OPTIONS.map((option) => ({
+      ...option,
+      disabled: tempRoles.length === 1 && tempRoles.includes(option.value)
+    }));
+
     return (
       <Space>
         <Select

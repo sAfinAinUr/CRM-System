@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router';
 
 import {
@@ -16,7 +15,6 @@ import { User } from '../types/admin';
 
 interface Props {
   user: User;
-  refetch: VoidFunction;
 }
 
 enum Actions {
@@ -32,8 +30,7 @@ const items = [
     label: 'Просмотр профиля',
     icon: <UserOutlined />
   },
-  { type: 'divider' },
-
+  { type: 'divider', key: 'divider' },
   {
     key: Actions.block,
     label: 'Заблокировать',
@@ -52,14 +49,31 @@ const items = [
   }
 ] satisfies MenuProps['items'];
 
+type AdminMenuItem = NonNullable<MenuProps['items']>[number];
+
+type AdminMenuOption = Extract<AdminMenuItem, { key: string }>;
+
+function isMenuOption(item: AdminMenuItem): item is AdminMenuOption {
+  return (
+    item !== null &&
+    typeof item === 'object' &&
+    'key' in item &&
+    typeof (item as { key?: unknown }).key !== 'undefined'
+  );
+}
+
 function getItems(user: User) {
   return items
     .map((item) => {
-      if ('type' in item && item.type === 'divider') {
+      if (item?.type === 'divider') {
         return item;
       }
 
-      if (!checkVisibility((item as any).key, user)) {
+      if (!isMenuOption(item)) {
+        return item;
+      }
+
+      if (!checkVisibility(item.key, user)) {
         return null;
       }
 
@@ -77,8 +91,7 @@ function checkVisibility(key: string, user: User): boolean {
   return false;
 }
 
-export default function AdminListActions({ user, refetch }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function AdminListActions({ user }: Props) {
   const [blockUser] = useBlockUserMutation();
   const [unblockUser] = useUnblockUserMutation();
   const [deleteUser] = useDeleteUserMutation();
@@ -102,8 +115,6 @@ export default function AdminListActions({ user, refetch }: Props) {
       default:
         break;
     }
-    setIsOpen(false);
-    refetch();
   };
 
   const menuItems = getItems(user).map((item) => {
@@ -116,8 +127,6 @@ export default function AdminListActions({ user, refetch }: Props) {
             description="Это действие нельзя будет отменить."
             onConfirm={async () => {
               await deleteUser(user.id);
-              refetch();
-              setIsOpen(false);
             }}
             onCancel={(e) => e?.stopPropagation()}
             okText="Да"
@@ -132,11 +141,8 @@ export default function AdminListActions({ user, refetch }: Props) {
   });
 
   return (
-    <Dropdown menu={{ items: menuItems, onClick }} open={isOpen}>
-      <Button
-        onClick={() => setIsOpen((prev) => !prev)}
-        shape="circle"
-        icon={<EllipsisOutlined />}></Button>
+    <Dropdown menu={{ items: menuItems, onClick }}>
+      <Button shape="circle" icon={<EllipsisOutlined />}></Button>
     </Dropdown>
   );
 }

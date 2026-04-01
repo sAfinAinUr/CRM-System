@@ -7,7 +7,7 @@ import RoleSelect from '../components/RoleSelect.tsx';
 import { useGetAdminListQuery } from '../store/index.ts';
 import { User, UsersOrderType } from '../types/admin.ts';
 
-const getColumns = (refetch: VoidFunction): TableColumnsType<User> => [
+const getColumns = (): TableColumnsType<User> => [
   {
     title: 'Имя',
     dataIndex: 'username',
@@ -44,7 +44,7 @@ const getColumns = (refetch: VoidFunction): TableColumnsType<User> => [
     title: 'Роли',
     dataIndex: 'roles',
     key: 'roles',
-    render: (_, user: User) => <RoleSelect user={user} refetch={refetch} />
+    render: (_, user: User) => <RoleSelect user={user} />
   },
   {
     title: 'Номер телефона',
@@ -53,7 +53,7 @@ const getColumns = (refetch: VoidFunction): TableColumnsType<User> => [
   {
     title: 'Действия',
     key: 'actions',
-    render: (_, user: User) => <AdminListActions user={user} refetch={refetch} />
+    render: (_, user: User) => <AdminListActions user={user} />
   }
 ];
 
@@ -66,7 +66,7 @@ export default function AdminPage() {
   const [pagination, setPagination] = useState({ page: 1, pageSize: 20 });
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
 
-  const { data, isSuccess, refetch } = useGetAdminListQuery({
+  const { data, isError, isLoading } = useGetAdminListQuery({
     page: pagination.page - 1,
     limit: pagination.pageSize,
     search: searchTextDb,
@@ -77,6 +77,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     debounceTimeoutRef.current = setTimeout(() => {
+      setPagination((prev) => (prev.page === 1 ? prev : { ...prev, page: 1 }));
       setSearchTextDb(searchText);
     }, 500);
 
@@ -85,14 +86,15 @@ export default function AdminPage() {
     };
   }, [searchText]);
 
-  if (!isSuccess) return null;
+  if (isError) return 'ошибка, не удалось загрузить данные';
 
   return (
     <>
       <Input.Search value={searchText} onChange={(e) => setSearchText(e.target.value)} />
       <Table<User>
-        columns={getColumns(refetch)}
-        dataSource={data.data}
+        columns={getColumns()}
+        loading={isLoading}
+        dataSource={data?.data ?? []}
         onChange={(_pagination, filters, sorter) => {
           if (Array.isArray(sorter)) return;
           if (typeof sorter.field === 'string') {
@@ -106,14 +108,13 @@ export default function AdminPage() {
           else setIsBlocked(undefined);
         }}
         pagination={{
-          total: data.meta.totalAmount,
+          total: data?.meta.totalAmount ?? 0,
           defaultCurrent: 1,
           defaultPageSize: 20,
           pageSizeOptions: [10, 20, 30],
           showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items `,
           onChange: (page, pageSize) => {
             setPagination({ page, pageSize });
-            console.log(page, pageSize);
           }
         }}
       />

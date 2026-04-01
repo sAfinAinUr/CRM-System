@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
 import type { MenuProps } from 'antd';
@@ -42,6 +43,8 @@ export default function PageMenu() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
+  const items = useMemo(() => getItemsByRoles(roles), [roles]);
+
   const onClick: MenuProps['onClick'] = ({ key }) => {
     navigate(key, { viewTransition: true });
   };
@@ -53,7 +56,7 @@ export default function PageMenu() {
       onClick={onClick}
       style={{ width: '100%', height: '100%' }}
       mode="inline"
-      items={getItemsByRoles(roles)}
+      items={items}
     />
   );
 }

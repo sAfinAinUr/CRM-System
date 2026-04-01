@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 
 import { setError as setStoreUserError } from '../store';
 import { Token } from '../types/auth';
@@ -7,6 +7,9 @@ import { tokenService } from './tokenService';
 
 let isRefreshing = false;
 let queueFailedResponses: { resolve: (value: unknown) => void; reject: () => void }[] = [];
+
+const MAX_RETRY = 3;
+const RETRY_DELAY = 1000;
 
 export const baseApi = axios.create({
   baseURL: import.meta.env.VITE_APP_API_BASE_URL,
@@ -33,14 +36,22 @@ api.interceptors.response.use(
     const isUnauthorizedError = error.response?.status === 401;
     const isLogin = isAxiosError && error.config?.url?.includes('/signin');
 
-    const errorConfig = error?.config;
+    const errorConfig = error?.config as AxiosRequestConfig & { __retryCount?: number };
+    const retryCount = errorConfig?.__retryCount ?? 0;
 
-    // баг системы, error.response пуст, хотя должен быть 429
-    if (isAxiosError && !error.response && errorConfig) {
+    const shouldRetryStatus =
+      !error.response || error.response.status >= 500 || error.response.status === 429;
+
+    const isRetryableError =
+      isAxiosError && errorConfig && retryCount < MAX_RETRY && shouldRetryStatus;
+
+    if (isRetryableError) {
+      errorConfig.__retryCount = retryCount + 1;
+
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve(api.request(errorConfig));
-        }, 1000);
+        }, RETRY_DELAY);
       });
     }
 
@@ -48,7 +59,7 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if (errorConfig.url.includes('/auth/refresh')) {
+    if (errorConfig?.url?.includes('/auth/refresh')) {
       tokenService.clearToken();
 
       import('../store/store').then(({ store }) => {
@@ -83,7 +94,7 @@ api.interceptors.response.use(
       isRefreshing = false;
 
       return api.request(errorConfig);
-    } catch {
+    } catch (err) {
       queueFailedResponses.forEach(({ reject }) => reject());
       queueFailedResponses = [];
       clearToken();
@@ -91,6 +102,8 @@ api.interceptors.response.use(
       import('../store/store').then(({ store }) => {
         store.dispatch(setStoreUserError(error));
       });
+
+      return Promise.reject(err);
     }
   }
 );

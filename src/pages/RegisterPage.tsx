@@ -9,12 +9,23 @@ import { UserRegistration } from '../types/auth';
 
 const { Title, Text } = Typography;
 
+const commonInputStyle = {
+  width: '100%',
+  maxWidth: UI_CONFIG.MAX_WIDTH,
+  height: UI_CONFIG.INPUT_HEIGHT
+};
+
+const submitButtonStyle = {
+  ...commonInputStyle,
+  backgroundColor: UI_CONFIG.PURPLE_COLOR
+};
+
 const RegisterPage = () => {
   const [signup, { isLoading, isSuccess, isError, error }] = useSignupMutation({});
 
   const [form] = Form.useForm();
 
-  const onFinish = async ({ ...rest }: UserRegistration & { confirm: string }) => {
+  const onFinish = async ({ confirm: _, ...rest }: UserRegistration & { confirm: string }) => {
     signup(rest);
   };
 
@@ -23,17 +34,6 @@ const RegisterPage = () => {
       message.error(error as string);
     }
   }, [error, isError]);
-
-  const commonInputStyle = {
-    width: '100%',
-    maxWidth: UI_CONFIG.MAX_WIDTH,
-    height: UI_CONFIG.INPUT_HEIGHT
-  };
-
-  const submitButtonStyle = {
-    ...commonInputStyle,
-    backgroundColor: UI_CONFIG.PURPLE_COLOR
-  };
 
   if (isSuccess) {
     return (

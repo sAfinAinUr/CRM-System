@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { Button, Card, Form, Input, message } from 'antd';
@@ -14,12 +14,15 @@ export default function UserProfilePage() {
   const navigate = useNavigate();
 
   const [updateUserData, { isLoading }] = useUpdateUserMutation();
+  const saveRequestRef = useRef<ReturnType<typeof updateUserData> | null>(null);
 
   const params = useParams<{ id: string }>();
   const id = Number(params.id);
-  const { data, refetch } = useGetUserProfileQuery(id);
+  const isValidID = Number.isFinite(id);
+  const { data, isError } = useGetUserProfileQuery(id, { skip: !isValidID });
 
   const exit = () => {
+    saveRequestRef.current?.abort();
     navigate('/admin');
   };
 
@@ -43,14 +46,18 @@ export default function UserProfilePage() {
       return;
     }
     try {
-      await updateUserData({ id, ...changedValues }).unwrap();
+      saveRequestRef.current = updateUserData({ id, ...changedValues });
+      await saveRequestRef.current.unwrap();
       message.success('Данные успешно обновлены');
       setIsEditing(false);
     } catch (error) {
       message.error(getErrorMessage(error));
-    } finally {
-      refetch();
     }
+  };
+
+  const handleCancelEditing = () => {
+    setIsEditing(false);
+    saveRequestRef.current?.abort();
   };
 
   return (
@@ -100,7 +107,7 @@ export default function UserProfilePage() {
                 style={{ height: 45, flex: 1 }}>
                 Сохранить
               </Button>
-              <Button onClick={() => setIsEditing(false)} style={{ height: 45, flex: 1 }}>
+              <Button onClick={handleCancelEditing} style={{ height: 45, flex: 1 }}>
                 Отмена
               </Button>
             </div>
@@ -114,6 +121,7 @@ export default function UserProfilePage() {
             <Button onClick={() => setIsEditing(true)}>Редактировать</Button>
           </>
         ))}
+      {isError && 'Не удалось загрузить пользователя'}
       <Button onClick={exit}>назад</Button>
     </>
   );
