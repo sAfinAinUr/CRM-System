@@ -1,17 +1,20 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
+
 import type { UserRegistration } from '../../types/auth';
 import { getAxiosBaseQuery, isBaseQueryError } from './baseQuery';
 
 const errorStatus = {
   400: 'Ошибка десериализации запроса или неверный ввод',
   409: 'Пользователь уже существует.',
-  500: 'Внутренняя ошибка сервера.',
+  500: 'Внутренняя ошибка сервера.'
 };
 
 export const registerService = createApi({
-  baseQuery: getAxiosBaseQuery({
-    baseUrl: import.meta.env.VITE_APP_API_BASE_URL,
-  }),
+  baseQuery: (args, api, extraOptions) => {
+    return getAxiosBaseQuery({
+      baseUrl: import.meta.env.VITE_APP_API_BASE_URL
+    })(args, api, extraOptions);
+  },
 
   reducerPath: 'registerService',
   tagTypes: ['register'],
@@ -20,7 +23,7 @@ export const registerService = createApi({
       query: (signupData) => ({
         url: `/auth/signup`,
         method: 'POST',
-        body: signupData,
+        body: signupData
       }),
       transformErrorResponse(baseQueryReturnValue) {
         if (
@@ -30,9 +33,9 @@ export const registerService = createApi({
         ) {
           return errorStatus[baseQueryReturnValue.status as keyof typeof errorStatus];
         }
-      },
-    }),
-  }),
+      }
+    })
+  })
 });
 
 export const { useSignupMutation } = registerService;

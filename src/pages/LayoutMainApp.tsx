@@ -1,13 +1,15 @@
+import { Outlet } from 'react-router';
+
 import { Layout, theme } from 'antd';
+
 import PageMenu from '../components/PageMenu';
 import { AuthProvider } from '../providers/AuthProvider';
-import { Outlet } from 'react-router';
 
 const { Content, Sider } = Layout;
 
 const LayoutMainApp: React.FC = () => {
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { colorBgContainer, borderRadiusLG }
   } = theme.useToken();
 
   return (
@@ -18,7 +20,7 @@ const LayoutMainApp: React.FC = () => {
           background: colorBgContainer,
           borderRadius: borderRadiusLG,
           width: '100%',
-          height: 'calc(100dvh - 24px*2)',
+          height: 'calc(100dvh - 24px*2)'
         }}>
         <Sider style={{ background: colorBgContainer }}>
           <PageMenu />
@@ -30,7 +32,7 @@ const LayoutMainApp: React.FC = () => {
             flexDirection: 'column',
             padding: '0 24px',
             minHeight: 280,
-            overflowY: 'scroll',
+            overflowY: 'scroll'
           }}>
           <Outlet />
         </Content>

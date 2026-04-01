@@ -1,13 +1,15 @@
-import TodoListPage from './pages/TodoListPage';
-
-import { createBrowserRouter, RouterProvider } from 'react-router';
-import ProfilePage from './pages/ProfilePage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
 import { Provider } from 'react-redux';
-import { store } from './store';
-import LayoutMainApp from './pages/LayoutMainApp';
+import { createBrowserRouter, RouterProvider } from 'react-router';
+
+import AdminPage from './pages/AdminPage';
 import LayoutAuth from './pages/LayoutAuth';
+import LayoutMainApp from './pages/LayoutMainApp';
+import LoginPage from './pages/LoginPage';
+import ProfilePage from './pages/ProfilePage';
+import RegisterPage from './pages/RegisterPage';
+import TodoListPage from './pages/TodoListPage';
+import UserProfilePage from './pages/UserProfilePage';
+import { store } from './store/store';
 
 const router = createBrowserRouter([
   {
@@ -15,27 +17,39 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <TodoListPage />,
+        element: <TodoListPage />
       },
       {
         path: '/profile',
-        element: <ProfilePage />,
+        element: <ProfilePage />
       },
-    ],
+      {
+        path: '/admin',
+        element: <AdminPage />
+      },
+      {
+        path: '/UserProfile/:id',
+        Component: UserProfilePage
+      }
+    ]
   },
   {
     element: <LayoutAuth />,
     children: [
       {
         path: '/login',
-        Component: LoginPage,
+        Component: LoginPage
       },
       {
         path: '/register',
-        Component: RegisterPage,
-      },
-    ],
+        Component: RegisterPage
+      }
+    ]
   },
+  {
+    path: '/UserProfile/:id',
+    Component: UserProfilePage
+  }
 ]);
 
 const App: React.FC = () => {

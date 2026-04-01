@@ -1,7 +1,8 @@
-import { createSlice, PayloadAction, createSelector } from '@reduxjs/toolkit/react';
-import type { Profile } from '../../types/auth';
-import { getUserProfileThunk, logoutUserThunk } from '../thunks/userAsyncThunks';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit/react';
+
+import type { Profile, Role } from '../../types/auth';
 import { RootState } from '../store';
+import { getUserProfileThunk, logoutUserThunk } from '../thunks/userAsyncThunks';
 
 interface UserState {
   isAuth: boolean;
@@ -20,7 +21,7 @@ export const userSlice = createSlice({
     },
     setError: (state, action: PayloadAction<unknown>) => {
       state.error = action.payload;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -37,15 +38,15 @@ export const userSlice = createSlice({
       .addCase(logoutUserThunk.rejected, (state, action) => {
         state.error = action.error;
       });
-  },
+  }
 });
 
-export const selectUser = createSelector(
-  [(state: RootState) => state],
-  (state: RootState) => state.userSlice.user
+export const selectUser = (state: RootState) => state.userSlice.user;
+export const selectUserError = (state: RootState) => state.userSlice.error;
+
+export const selectUserRoles = createSelector(
+  [selectUser],
+  (user) => user?.roles || ([] as Role[])
 );
-export const selectUserError = createSelector(
-  [(state: RootState) => state],
-  (state: RootState) => state.userSlice.error
-);
+
 export const { setAuth, setError } = userSlice.actions;

@@ -1,17 +1,31 @@
 import { useEffect } from 'react';
-import { Form, Input, Button, message, Typography } from 'antd';
 import { Link } from 'react-router';
-import { UserRegistration } from '../types/auth';
-import { useSignupMutation } from '../store';
+
+import { Button, Form, Input, message, Typography } from 'antd';
+
 import { UI_CONFIG, VALIDATION } from '../helpers/getValidationConfig';
+import { useSignupMutation } from '../store';
+import { UserRegistration } from '../types/auth';
 
 const { Title, Text } = Typography;
 
+const commonInputStyle = {
+  width: '100%',
+  maxWidth: UI_CONFIG.MAX_WIDTH,
+  height: UI_CONFIG.INPUT_HEIGHT
+};
+
+const submitButtonStyle = {
+  ...commonInputStyle,
+  backgroundColor: UI_CONFIG.PURPLE_COLOR
+};
+
 const RegisterPage = () => {
   const [signup, { isLoading, isSuccess, isError, error }] = useSignupMutation({});
+
   const [form] = Form.useForm();
 
-  const onFinish = async ({ confirm, ...rest }: UserRegistration & { confirm: string }) => {
+  const onFinish = async ({ confirm: _, ...rest }: UserRegistration & { confirm: string }) => {
     signup(rest);
   };
 
@@ -21,21 +35,11 @@ const RegisterPage = () => {
     }
   }, [error, isError]);
 
-  const commonInputStyle = {
-    width: '100%',
-    maxWidth: UI_CONFIG.MAX_WIDTH,
-    height: UI_CONFIG.INPUT_HEIGHT,
-  };
-
-  const submitButtonStyle = {
-    ...commonInputStyle,
-    backgroundColor: UI_CONFIG.PURPLE_COLOR,
-  };
-
   if (isSuccess) {
     return (
       <div style={{ textAlign: 'center', padding: UI_CONFIG.SUCCESS_PADDING }}>
         <Title level={3}>Вы успешно зарегистрированы!</Title>
+
         <Link to="/login">Перейти на страницу авторизации для входа в систему</Link>
       </div>
     );
@@ -52,14 +56,14 @@ const RegisterPage = () => {
             {
               min: VALIDATION.USERNAME.MIN,
               transform: (value) => value?.trim(),
-              message: `Минимум ${VALIDATION.USERNAME.MIN} символ`,
+              message: `Минимум ${VALIDATION.USERNAME.MIN} символ`
             },
             {
               max: VALIDATION.USERNAME.MAX,
-              message: `Максимум ${VALIDATION.USERNAME.MAX} символов`,
+              message: `Максимум ${VALIDATION.USERNAME.MAX} символов`
             },
             { whitespace: true, required: true, message: 'Введите имя пользователя' },
-            { pattern: VALIDATION.USERNAME.PATTERN, message: 'Только русские или латинские буквы' },
+            { pattern: VALIDATION.USERNAME.PATTERN, message: 'Только русские или латинские буквы' }
           ]}>
           <Input style={commonInputStyle} />
         </Form.Item>
@@ -71,14 +75,14 @@ const RegisterPage = () => {
             {
               min: VALIDATION.LOGIN.MIN,
               transform: (value) => value?.trim(),
-              message: `Минимум ${VALIDATION.LOGIN.MIN} символа`,
+              message: `Минимум ${VALIDATION.LOGIN.MIN} символа`
             },
             {
               max: VALIDATION.LOGIN.MAX,
-              message: `Максимум ${VALIDATION.LOGIN.MAX} символа`,
+              message: `Максимум ${VALIDATION.LOGIN.MAX} символа`
             },
             { required: true, message: 'Введите логин' },
-            { pattern: VALIDATION.LOGIN.PATTERN, message: 'Только латинские буквы' },
+            { pattern: VALIDATION.LOGIN.PATTERN, message: 'Только латинские буквы' }
           ]}>
           <Input style={commonInputStyle} />
         </Form.Item>
@@ -91,8 +95,8 @@ const RegisterPage = () => {
             {
               min: VALIDATION.PASSWORD.MIN,
               max: VALIDATION.PASSWORD.MAX,
-              message: `От ${VALIDATION.PASSWORD.MIN} до ${VALIDATION.PASSWORD.MAX} символов`,
-            },
+              message: `От ${VALIDATION.PASSWORD.MIN} до ${VALIDATION.PASSWORD.MAX} символов`
+            }
           ]}>
           <Input.Password placeholder="******" style={commonInputStyle} />
         </Form.Item>
@@ -108,9 +112,10 @@ const RegisterPage = () => {
                 if (!value || getFieldValue('password') === value) {
                   return Promise.resolve();
                 }
+
                 return Promise.reject(new Error('Пароли не совпадают'));
-              },
-            }),
+              }
+            })
           ]}>
           <Input.Password placeholder="******" style={commonInputStyle} />
         </Form.Item>
@@ -120,7 +125,7 @@ const RegisterPage = () => {
           name="email"
           rules={[
             { required: true, message: 'Введите email' },
-            { type: 'email', message: 'Введите валидный email' },
+            { type: 'email', message: 'Введите валидный email' }
           ]}>
           <Input placeholder="example@mail.com" style={commonInputStyle} />
         </Form.Item>
@@ -129,7 +134,7 @@ const RegisterPage = () => {
           label="Телефон"
           name="phoneNumber"
           rules={[
-            { pattern: VALIDATION.PHONE_PATTERN, message: 'Введите валидный номер телефона' },
+            { pattern: VALIDATION.PHONE_PATTERN, message: 'Введите валидный номер телефона' }
           ]}>
           <Input placeholder="+79991234567" style={commonInputStyle} />
         </Form.Item>

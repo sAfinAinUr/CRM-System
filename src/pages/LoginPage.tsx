@@ -1,10 +1,11 @@
-import { Button, Form, Input, message, Typography } from 'antd';
-import { Link, useNavigate } from 'react-router';
 import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router';
 
+import { Button, Form, Input, message, Typography } from 'antd';
+
+import { VALIDATION } from '../helpers/getValidationConfig';
 import { useLoginMutation } from '../store';
 import { AuthData } from '../types/auth';
-import { VALIDATION } from '../helpers/getValidationConfig';
 
 const { Title, Text } = Typography;
 
@@ -15,11 +16,12 @@ const LoginForm = () => {
 
   const purpleColor = '#7F265B';
   const inputStyle = { width: '100%', maxWidth: '420px', height: 45 };
+
   const buttonStyle = {
     backgroundColor: `${purpleColor}`,
     width: '100%',
     maxWidth: '420px',
-    height: 45,
+    height: 45
   };
 
   const onFinish = async (values: AuthData) => {
@@ -49,14 +51,14 @@ const LoginForm = () => {
             {
               min: VALIDATION.LOGIN.MIN,
               transform: (value) => value?.trim(),
-              message: `Минимум ${VALIDATION.LOGIN.MIN} символа`,
+              message: `Минимум ${VALIDATION.LOGIN.MIN} символа`
             },
             {
               max: VALIDATION.LOGIN.MAX,
-              message: `Максимум ${VALIDATION.LOGIN.MAX} символа`,
+              message: `Максимум ${VALIDATION.LOGIN.MAX} символа`
             },
             { required: true, message: 'Введите логин' },
-            { pattern: VALIDATION.LOGIN.PATTERN, message: 'Только латинские буквы' },
+            { pattern: VALIDATION.LOGIN.PATTERN, message: 'Только латинские буквы' }
           ]}>
           <Input placeholder="Введите логин" style={inputStyle} />
         </Form.Item>
@@ -68,8 +70,8 @@ const LoginForm = () => {
             {
               min: VALIDATION.PASSWORD.MIN,
               max: VALIDATION.PASSWORD.MAX,
-              message: `От ${VALIDATION.PASSWORD.MIN} до ${VALIDATION.PASSWORD.MAX} символов`,
-            },
+              message: `От ${VALIDATION.PASSWORD.MIN} до ${VALIDATION.PASSWORD.MAX} символов`
+            }
           ]}>
           <Input.Password placeholder="Введите пароль" style={inputStyle} />
         </Form.Item>

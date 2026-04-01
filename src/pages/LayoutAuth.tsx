@@ -1,13 +1,14 @@
+import { Outlet } from 'react-router';
+
 import { Layout, theme } from 'antd';
 
 import backgroundImage from '../assets/bgImgAuth.png';
-import { Outlet } from 'react-router';
 
 const { Content, Sider } = Layout;
 
 const LayoutAuth: React.FC = () => {
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { colorBgContainer, borderRadiusLG }
   } = theme.useToken();
 
   return (
@@ -15,7 +16,7 @@ const LayoutAuth: React.FC = () => {
       style={{
         background: colorBgContainer,
         borderRadius: borderRadiusLG,
-        width: '100%',
+        width: '100%'
       }}>
       <Sider
         width={911}
@@ -30,7 +31,7 @@ const LayoutAuth: React.FC = () => {
           display: 'flex',
           flexDirection: 'column',
           overflowY: 'auto',
-          padding: '40px 24px',
+          padding: '40px 24px'
         }}>
         <div style={{ margin: 'auto', width: '100%' }}>
           <Outlet />

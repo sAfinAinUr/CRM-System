@@ -1,14 +1,16 @@
 import { PropsWithChildren, useEffect, useState } from 'react';
 import { Navigate } from 'react-router';
+
+import { Spin } from 'antd';
+
+import { getRefreshTokenFromCookie } from '../api/axios';
 import {
   getUserProfileThunk,
+  selectUserError,
   setAuth,
   useAppDispatch,
-  useAppSelector,
-  selectUserError,
+  useAppSelector
 } from '../store';
-import { getRefreshTokenFromCookie } from '../api/axios';
-import { Spin } from 'antd';
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [isInit, setIsInit] = useState<boolean>(false);
@@ -18,6 +20,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    if (isInit) return;
+
     (async () => {
       try {
         const refreshToken = await getRefreshTokenFromCookie();
@@ -27,7 +31,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         } else {
           setShouldRedirect(true);
         }
-      } catch (e) {
+      } catch {
         setShouldRedirect(true);
       } finally {
         setIsInit(true);

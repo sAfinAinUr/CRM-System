@@ -1,20 +1,22 @@
 import { useState } from 'react';
-import { deleteTodo, editTodo } from '../api/todo';
-import { Todo } from '../types/todo';
+
+import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons';
 import {
   Button,
+  Card,
+  Checkbox,
+  Flex,
   Form,
   Input,
   message,
-  Checkbox,
   Popconfirm,
   Space,
-  Card,
-  Flex,
-  Typography,
+  Typography
 } from 'antd';
-import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons';
-import { getErrorMessage } from '../helpers/getErrorMessage.ts';
+
+import { deleteTodo, editTodo } from '../api/todo';
+import { getErrorMessage } from '../helpers/getErrorMessage';
+import { Todo } from '../types/todo';
 
 interface Props {
   todo: Todo;
@@ -38,6 +40,7 @@ export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: 
   async function handleEditTodo(event: EditTodoFieldType) {
     if (todo.title === event.todoName) {
       setIsEditing(false);
+
       return;
     }
     try {
@@ -92,7 +95,7 @@ export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: 
               onFinish={handleEditTodo}
               onFinishFailed={showErrorMesssage}
               initialValues={{
-                todoName: todo.title,
+                todoName: todo.title
               }}
               autoComplete="off">
               <Form.Item
@@ -101,17 +104,17 @@ export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: 
                   {
                     required: true,
                     whitespace: true,
-                    message: 'Поле не должно быть пустым',
+                    message: 'Поле не должно быть пустым'
                   },
                   {
                     min: 2,
                     transform: (value) => value?.trim(),
-                    message: 'Минимум 2 символа (не считая пробелы)',
+                    message: 'Минимум 2 символа (не считая пробелы)'
                   },
                   {
                     max: 64,
-                    message: 'Максимум 64 символа',
-                  },
+                    message: 'Максимум 64 символа'
+                  }
                 ]}>
                 <Input placeholder="Название задачи" />
               </Form.Item>
@@ -142,7 +145,7 @@ export default function TodoItem({ todo, updateList, onStartEdit, onStopEdit }: 
                 style={{
                   color: todo.isDone ? 'gray' : 'inherit',
                   textDecoration: todo.isDone ? 'line-through' : 'none',
-                  maxWidth: 'calc(400px - 168px)',
+                  maxWidth: 'calc(400px - 168px)'
                 }}
                 ellipsis={{ tooltip: todo.title }}>
                 {todo.title}

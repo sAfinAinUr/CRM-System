@@ -1,6 +1,7 @@
 import { Flex } from 'antd';
-import TodoItem from './TodoItem.jsx';
+
 import { Todo } from '../types/todo';
+import TodoItem from './TodoItem';
 
 interface Props {
   list: Todo[];

@@ -1,18 +1,21 @@
-import axios from 'axios';
-import { updateToken } from './auth';
-import { Token } from '../types/auth';
-import { tokenService } from './tokenService';
+import axios, { AxiosRequestConfig } from 'axios';
 
-import { store, setError as setStoreUserError, setError } from '../store';
+import { setError as setStoreUserError } from '../store';
+import { Token } from '../types/auth';
+import { updateToken } from './auth';
+import { tokenService } from './tokenService';
 
 let isRefreshing = false;
 let queueFailedResponses: { resolve: (value: unknown) => void; reject: () => void }[] = [];
 
+const MAX_RETRY = 3;
+const RETRY_DELAY = 1000;
+
 export const baseApi = axios.create({
   baseURL: import.meta.env.VITE_APP_API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
-  },
+    'Content-Type': 'application/json'
+  }
 });
 
 export const api = baseApi.create();
@@ -20,6 +23,7 @@ export const api = baseApi.create();
 api.interceptors.request.use(async (request) => {
   const accessToken = tokenService.getToken();
   accessToken && (request.headers.Authorization = `Bearer ${accessToken}`);
+
   return request;
 });
 
@@ -32,14 +36,36 @@ api.interceptors.response.use(
     const isUnauthorizedError = error.response?.status === 401;
     const isLogin = isAxiosError && error.config?.url?.includes('/signin');
 
-    const errorConfig = error?.config;
+    const errorConfig = error?.config as AxiosRequestConfig & { __retryCount?: number };
+    const retryCount = errorConfig?.__retryCount ?? 0;
+
+    const shouldRetryStatus =
+      !error.response || error.response.status >= 500 || error.response.status === 429;
+
+    const isRetryableError =
+      isAxiosError && errorConfig && retryCount < MAX_RETRY && shouldRetryStatus;
+
+    if (isRetryableError) {
+      errorConfig.__retryCount = retryCount + 1;
+
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(api.request(errorConfig));
+        }, RETRY_DELAY);
+      });
+    }
+
     if (!isAxiosError || !errorConfig || !isUnauthorizedError || isLogin) {
       return Promise.reject(error);
     }
 
-    if (errorConfig.url.includes('/auth/refresh')) {
+    if (errorConfig?.url?.includes('/auth/refresh')) {
       tokenService.clearToken();
-      store.dispatch(setStoreUserError(error));
+
+      import('../store/store').then(({ store }) => {
+        store.dispatch(setStoreUserError(error));
+      });
+
       return Promise.reject(error);
     }
     if (isRefreshing) {
@@ -56,6 +82,7 @@ api.interceptors.response.use(
     const refreshToken = await getRefreshTokenFromCookie();
     if (!refreshToken) {
       tokenService.clearToken();
+
       return Promise.reject(error);
     }
     try {
@@ -65,22 +92,28 @@ api.interceptors.response.use(
       queueFailedResponses.forEach(({ resolve }) => resolve(null));
       queueFailedResponses = [];
       isRefreshing = false;
+
       return api.request(errorConfig);
-    } catch {
+    } catch (err) {
       queueFailedResponses.forEach(({ reject }) => reject());
       queueFailedResponses = [];
       clearToken();
 
-      store.dispatch(setStoreUserError(error));
+      import('../store/store').then(({ store }) => {
+        store.dispatch(setStoreUserError(error));
+      });
+
+      return Promise.reject(err);
     }
   }
 );
 
 export async function setToken(token: Token) {
   tokenService.setToken(token.accessToken);
+
   await cookieStore.set({
     name: 'refreshToken',
-    value: token.refreshToken,
+    value: token.refreshToken
   });
 }
 
@@ -91,5 +124,6 @@ export function clearToken() {
 
 export async function getRefreshTokenFromCookie(): Promise<string | undefined> {
   const refreshTokenCookie = await cookieStore.get('refreshToken');
+
   return refreshTokenCookie?.value;
 }

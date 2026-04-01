@@ -1,8 +1,9 @@
-import { Button, Card, message, Typography } from 'antd';
-import { logoutUserThunk, useAppDispatch, useAppSelector, selectUser } from '../store';
-
 import { useNavigate } from 'react-router';
+
+import { Button, Card, message, Typography } from 'antd';
+
 import { getErrorMessage } from '../helpers/getErrorMessage';
+import { logoutUserThunk, selectUser, useAppDispatch, useAppSelector } from '../store';
 
 export default function ProfilePage() {
   const user = useAppSelector(selectUser);
@@ -22,6 +23,7 @@ export default function ProfilePage() {
   const { Text, Paragraph } = Typography;
 
   if (!user) return null;
+
   return (
     <>
       <Card title={<Text strong>{user.username}</Text>} variant="borderless">

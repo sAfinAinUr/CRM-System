@@ -1,0 +1,50 @@
+// Интерфейс запроса для фильтрации и сортировки пользователей
+export interface UserFilters {
+  search?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  isBlocked?: boolean;
+  limit?: number; // сколько на странице
+  page?: number; // страницу
+}
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  date: string;
+  isBlocked: boolean;
+  roles: Roles[];
+  phoneNumber: string;
+}
+
+export interface MetaResponse<T> {
+  data: T[];
+  meta: {
+    totalAmount: number;
+    sortBy: string;
+    sortOrder: 'asc' | 'desc';
+  };
+}
+
+export interface UserRolesRequest {
+  id: number;
+  roles: Roles[];
+}
+
+export interface UserRequest {
+  id: number;
+  username?: string;
+  email?: string;
+  phoneNumber?: string;
+}
+
+export enum Roles {
+  ADMIN = 'ADMIN',
+  MODERATOR = 'MODERATOR',
+  USER = 'USER'
+}
+
+export type UsersListResponse = MetaResponse<User>;
+
+export type UsersOrderType = Pick<UserFilters, 'sortOrder'>['sortOrder'];
